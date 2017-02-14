@@ -1,1 +1,577 @@
+Sub GenerarCuentas()
 
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+Sheets("Plan de Cuentas").Activate
+
+Dim Disponibilidades1()
+Dim CreditosPorVentas1()
+Dim BienesDeCambio1()
+Dim OtrosCreditos1()
+Dim CreditosALargoPlazo1()
+Dim BienesDeUso1()
+Dim Intangibles1()
+Dim DeudasComerciales1()
+Dim DeudasFinancieras1()
+Dim OtrasDeudas1()
+Dim Provisiones1()
+Dim Previsiones1()
+Dim DeudasALargoPlazo1()
+Dim PrevisionesNoCorrientes1()
+Dim Capital1()
+Dim AjustesAlCapital1()
+Dim Reservas1()
+Dim Resultados1()
+Dim CostoDeVentas1()
+Dim GastosOperativos1()
+Dim GastosFinancieros1()
+Dim GastosExtraordinarios1()
+Dim DescuentosOtorgados1()
+Dim IngresosOperativos1()
+Dim IngresosExtraordinarios1()
+
+Dim Disponibilidades2()
+Dim CreditosPorVentas2()
+Dim BienesDeCambio2()
+Dim OtrosCreditos2()
+Dim CreditosALargoPlazo2()
+Dim BienesDeUso2()
+Dim Intangibles2()
+Dim DeudasComerciales2()
+Dim DeudasFinancieras2()
+Dim OtrasDeudas2()
+Dim Provisiones2()
+Dim Previsiones2()
+Dim DeudasALargoPlazo2()
+Dim PrevisionesNoCorrientes2()
+Dim Capital2()
+Dim AjustesAlCapital2()
+Dim Reservas2()
+Dim Resultados2()
+Dim CostoDeVentas2()
+Dim GastosOperativos2()
+Dim GastosFinancieros2()
+Dim GastosExtraordinarios2()
+Dim DescuentosOtorgados2()
+Dim IngresosOperativos2()
+Dim IngresosExtraordinarios2()
+
+ReDim Disponibilidades1(0)
+ReDim CreditosPorVentas1(0)
+ReDim BienesDeCambio1(0)
+ReDim OtrosCreditos1(0)
+ReDim CreditosALargoPlazo1(0)
+ReDim BienesDeUso1(0)
+ReDim Intangibles1(0)
+ReDim DeudasComerciales1(0)
+ReDim DeudasFinancieras1(0)
+ReDim OtrasDeudas1(0)
+ReDim Provisiones1(0)
+ReDim Previsiones1(0)
+ReDim DeudasALargoPlazo1(0)
+ReDim PrevisionesNoCorrientes1(0)
+ReDim Capital1(0)
+ReDim AjustesAlCapital1(0)
+ReDim Reservas1(0)
+ReDim Resultados1(0)
+ReDim CostoDeVentas1(0)
+ReDim GastosOperativos1(0)
+ReDim GastosFinancieros1(0)
+ReDim GastosExtraordinarios1(0)
+ReDim DescuentosOtorgados1(0)
+ReDim IngresosOperativos1(0)
+ReDim IngresosExtraordinarios1(0)
+
+ReDim Disponibilidades2(0)
+ReDim CreditosPorVentas2(0)
+ReDim BienesDeCambio2(0)
+ReDim OtrosCreditos2(0)
+ReDim CreditosALargoPlazo2(0)
+ReDim BienesDeUso2(0)
+ReDim Intangibles2(0)
+ReDim DeudasComerciales2(0)
+ReDim DeudasFinancieras2(0)
+ReDim OtrasDeudas2(0)
+ReDim Provisiones2(0)
+ReDim Previsiones2(0)
+ReDim DeudasALargoPlazo2(0)
+ReDim PrevisionesNoCorrientes2(0)
+ReDim Capital2(0)
+ReDim AjustesAlCapital2(0)
+ReDim Reservas2(0)
+ReDim Resultados2(0)
+ReDim CostoDeVentas2(0)
+ReDim GastosOperativos2(0)
+ReDim GastosFinancieros2(0)
+ReDim GastosExtraordinarios2(0)
+ReDim DescuentosOtorgados2(0)
+ReDim IngresosOperativos2(0)
+ReDim IngresosExtraordinarios2(0)
+
+Disponibilidades1(0) = "Disponibilidades"
+CreditosPorVentas1(0) = "Créditos por Ventas"
+BienesDeCambio1(0) = "Bienes de Cambio"
+OtrosCreditos1(0) = "Otros créditos"
+CreditosALargoPlazo1(0) = "Créditos a Largo Plazo"
+BienesDeUso1(0) = "Bienes de Uso"
+Intangibles1(0) = "Intangibles"
+DeudasComerciales1(0) = "Deudas Comerciales"
+DeudasFinancieras1(0) = "Deudas Financieras"
+OtrasDeudas1(0) = "Otras Deudas"
+Provisiones1(0) = "Provisiones"
+Previsiones1(0) = "Previsiones"
+DeudasALargoPlazo1(0) = "Deudas a Largo Plazo"
+PrevisionesNoCorrientes1(0) = "Previsiones No Corrientes"
+Capital1(0) = "Capital"
+AjustesAlCapital1(0) = "Ajustes al Capital"
+Reservas1(0) = "Reservas"
+Resultados1(0) = "Resultados"
+CostoDeVentas1(0) = "Costo de Ventas"
+GastosOperativos1(0) = "Gastos Operativos"
+GastosFinancieros1(0) = "Gastos Financieros"
+GastosExtraordinarios1(0) = "Gastos Extraordinarios"
+DescuentosOtorgados1(0) = "Descuentos otorgados"
+IngresosOperativos1(0) = "Ingresos Operativos"
+IngresosExtraordinarios1(0) = "Ingresos Extraordinarios"
+
+Disponibilidades2(0) = "A0101"
+CreditosPorVentas2(0) = "A0102"
+BienesDeCambio2(0) = "A0103"
+OtrosCreditos2(0) = "A0104"
+CreditosALargoPlazo2(0) = "A0201"
+BienesDeUso2(0) = "A0202"
+Intangibles2(0) = "A0203"
+DeudasComerciales2(0) = "P0101"
+DeudasFinancieras2(0) = "P0102"
+OtrasDeudas2(0) = "P0103"
+Provisiones2(0) = "P0104"
+Previsiones2(0) = "P0105"
+DeudasALargoPlazo2(0) = "P0201"
+PrevisionesNoCorrientes2(0) = "P0202"
+Capital2(0) = "PN0101"
+AjustesAlCapital2(0) = "PN0102"
+Reservas2(0) = "PN0103"
+Resultados2(0) = "PN0104"
+CostoDeVentas2(0) = "RN0101"
+GastosOperativos2(0) = "RN0102"
+GastosFinancieros2(0) = "RN0103"
+GastosExtraordinarios2(0) = "RN0104"
+DescuentosOtorgados2(0) = "RN0105"
+IngresosOperativos2(0) = "RP0101"
+IngresosExtraordinarios2(0) = "RP0102"
+
+Dim c As String
+
+For n = 2 To Range("B2").End(xlDown).Row
+    
+    Select Case Range("C" & n).Value
+        Case "Disponibilidades"
+            ReDim Preserve Disponibilidades1(UBound(Disponibilidades1()) + 1)
+            ReDim Preserve Disponibilidades2(UBound(Disponibilidades2()) + 1)
+            
+            Disponibilidades1(UBound(Disponibilidades1())) = Range("B" & n).Value
+            Disponibilidades2(UBound(Disponibilidades2())) = UBound(Disponibilidades2())
+            
+            c = UBound(Disponibilidades2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Disponibilidades2(0) & c
+            
+        Case "Créditos por Ventas"
+            ReDim Preserve CreditosPorVentas1(UBound(CreditosPorVentas1()) + 1)
+            ReDim Preserve CreditosPorVentas2(UBound(CreditosPorVentas2()) + 1)
+            
+            CreditosPorVentas1(UBound(CreditosPorVentas1())) = Range("B" & n).Value
+            CreditosPorVentas2(UBound(CreditosPorVentas2())) = UBound(CreditosPorVentas2())
+            
+            c = UBound(CreditosPorVentas2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = CreditosPorVentas2(0) & c
+
+        Case "Bienes de Cambio"
+            ReDim Preserve BienesDeCambio1(UBound(BienesDeCambio1()) + 1)
+            ReDim Preserve BienesDeCambio2(UBound(BienesDeCambio2()) + 1)
+            
+            BienesDeCambio1(UBound(BienesDeCambio1())) = Range("B" & n).Value
+            BienesDeCambio2(UBound(BienesDeCambio2())) = UBound(BienesDeCambio2())
+            
+            c = UBound(BienesDeCambio2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = BienesDeCambio2(0) & c
+
+        Case "Otros créditos"
+            ReDim Preserve OtrosCreditos1(UBound(OtrosCreditos1()) + 1)
+            ReDim Preserve OtrosCreditos2(UBound(OtrosCreditos2()) + 1)
+            
+            OtrosCreditos1(UBound(OtrosCreditos1())) = Range("B" & n).Value
+            OtrosCreditos2(UBound(OtrosCreditos2())) = UBound(OtrosCreditos2())
+            
+            c = UBound(OtrosCreditos2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = OtrosCreditos2(0) & c
+
+        Case "Créditos a Largo Plazo"
+            ReDim Preserve CreditosALargoPlazo1(UBound(CreditosALargoPlazo1()) + 1)
+            ReDim Preserve CreditosALargoPlazo2(UBound(CreditosALargoPlazo2()) + 1)
+            
+            CreditosALargoPlazo1(UBound(CreditosALargoPlazo1())) = Range("B" & n).Value
+            CreditosALargoPlazo2(UBound(CreditosALargoPlazo2())) = UBound(CreditosALargoPlazo2())
+            
+            c = UBound(CreditosALargoPlazo2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = CreditosALargoPlazo2(0) & c
+
+        Case "Bienes de Uso"
+            ReDim Preserve BienesDeUso1(UBound(BienesDeUso1()) + 1)
+            ReDim Preserve BienesDeUso2(UBound(BienesDeUso2()) + 1)
+            
+            BienesDeUso1(UBound(BienesDeUso1())) = Range("B" & n).Value
+            BienesDeUso2(UBound(BienesDeUso2())) = UBound(BienesDeUso2())
+            
+            c = UBound(BienesDeUso2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = BienesDeUso2(0) & c
+
+        Case "Intangibles"
+            ReDim Preserve Intangibles1(UBound(Intangibles1()) + 1)
+            ReDim Preserve Intangibles2(UBound(Intangibles2()) + 1)
+            
+            Intangibles1(UBound(Intangibles1())) = Range("B" & n).Value
+            Intangibles2(UBound(Intangibles2())) = UBound(Intangibles2())
+            
+            c = UBound(Intangibles2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Intangibles2(0) & c
+
+        Case "Deudas Comerciales"
+            ReDim Preserve DeudasComerciales1(UBound(DeudasComerciales1()) + 1)
+            ReDim Preserve DeudasComerciales2(UBound(DeudasComerciales2()) + 1)
+            
+            DeudasComerciales1(UBound(DeudasComerciales1())) = Range("B" & n).Value
+            DeudasComerciales2(UBound(DeudasComerciales2())) = UBound(DeudasComerciales2())
+            
+            c = UBound(DeudasComerciales2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = DeudasComerciales2(0) & c
+
+        Case "Deudas Financieras"
+            ReDim Preserve DeudasFinancieras1(UBound(DeudasFinancieras1()) + 1)
+            ReDim Preserve DeudasFinancieras2(UBound(DeudasFinancieras2()) + 1)
+            
+            DeudasFinancieras1(UBound(DeudasFinancieras1())) = Range("B" & n).Value
+            DeudasFinancieras2(UBound(DeudasFinancieras2())) = UBound(DeudasFinancieras2())
+            
+            c = UBound(DeudasFinancieras2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = DeudasFinancieras2(0) & c
+
+        Case "Otras Deudas"
+            ReDim Preserve OtrasDeudas1(UBound(OtrasDeudas1()) + 1)
+            ReDim Preserve OtrasDeudas2(UBound(OtrasDeudas2()) + 1)
+            
+            OtrasDeudas1(UBound(OtrasDeudas1())) = Range("B" & n).Value
+            OtrasDeudas2(UBound(OtrasDeudas2())) = UBound(OtrasDeudas2())
+            
+            c = UBound(OtrasDeudas2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = OtrasDeudas2(0) & c
+
+        Case "Provisiones"
+            ReDim Preserve Provisiones1(UBound(Provisiones1()) + 1)
+            ReDim Preserve Provisiones2(UBound(Provisiones2()) + 1)
+            
+            Provisiones1(UBound(Provisiones1())) = Range("B" & n).Value
+            Provisiones2(UBound(Provisiones2())) = UBound(Provisiones2())
+            
+            c = UBound(Provisiones2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Provisiones2(0) & c
+
+        Case "Previsiones"
+            ReDim Preserve Previsiones1(UBound(Previsiones1()) + 1)
+            ReDim Preserve Previsiones2(UBound(Previsiones2()) + 1)
+            
+            Previsiones1(UBound(Previsiones1())) = Range("B" & n).Value
+            Previsiones2(UBound(Previsiones2())) = UBound(Previsiones2())
+            
+            c = UBound(Previsiones2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Previsiones2(0) & c
+
+        Case "Deudas a Largo Plazo"
+            ReDim Preserve DeudasALargoPlazo1(UBound(DeudasALargoPlazo1()) + 1)
+            ReDim Preserve DeudasALargoPlazo2(UBound(DeudasALargoPlazo2()) + 1)
+            
+            DeudasALargoPlazo1(UBound(DeudasALargoPlazo1())) = Range("B" & n).Value
+            DeudasALargoPlazo2(UBound(DeudasALargoPlazo2())) = UBound(DeudasALargoPlazo2())
+            
+            c = UBound(DeudasALargoPlazo2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = DeudasALargoPlazo2(0) & c
+
+        Case "Previsiones No Corrientes"
+            ReDim Preserve PrevisionesNoCorrientes1(UBound(PrevisionesNoCorrientes1()) + 1)
+            ReDim Preserve PrevisionesNoCorrientes2(UBound(PrevisionesNoCorrientes2()) + 1)
+            
+            PrevisionesNoCorrientes1(UBound(PrevisionesNoCorrientes1())) = Range("B" & n).Value
+            PrevisionesNoCorrientes2(UBound(PrevisionesNoCorrientes2())) = UBound(PrevisionesNoCorrientes2())
+            
+            c = UBound(PrevisionesNoCorrientes2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = PrevisionesNoCorrientes2(0) & c
+
+        Case "Capital"
+            ReDim Preserve Capital1(UBound(Capital1()) + 1)
+            ReDim Preserve Capital2(UBound(Capital2()) + 1)
+            
+            Capital1(UBound(Capital1())) = Range("B" & n).Value
+            Capital2(UBound(Capital2())) = UBound(Capital2())
+            
+            c = UBound(Capital2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Capital2(0) & c
+
+        Case "Ajustes al Capital"
+            ReDim Preserve AjustesAlCapital1(UBound(AjustesAlCapital1()) + 1)
+            ReDim Preserve AjustesAlCapital2(UBound(AjustesAlCapital2()) + 1)
+            
+            AjustesAlCapital1(UBound(AjustesAlCapital1())) = Range("B" & n).Value
+            AjustesAlCapital2(UBound(AjustesAlCapital2())) = UBound(AjustesAlCapital2())
+            
+            c = UBound(AjustesAlCapital2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = AjustesAlCapital2(0) & c
+
+        Case "Reservas"
+            ReDim Preserve Reservas1(UBound(Reservas1()) + 1)
+            ReDim Preserve Reservas2(UBound(Reservas2()) + 1)
+            
+            Reservas1(UBound(Reservas1())) = Range("B" & n).Value
+            Reservas2(UBound(Reservas2())) = UBound(Reservas2())
+            
+            c = UBound(Reservas2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Reservas2(0) & c
+
+        Case "Resultados"
+            ReDim Preserve Resultados1(UBound(Resultados1()) + 1)
+            ReDim Preserve Resultados2(UBound(Resultados2()) + 1)
+            
+            Resultados1(UBound(Resultados1())) = Range("B" & n).Value
+            Resultados2(UBound(Resultados2())) = UBound(Resultados2())
+            
+            c = UBound(Resultados2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = Resultados2(0) & c
+
+        Case "Costo de Ventas"
+            ReDim Preserve CostoDeVentas1(UBound(CostoDeVentas1()) + 1)
+            ReDim Preserve CostoDeVentas2(UBound(CostoDeVentas2()) + 1)
+            
+            CostoDeVentas1(UBound(CostoDeVentas1())) = Range("B" & n).Value
+            CostoDeVentas2(UBound(CostoDeVentas2())) = UBound(CostoDeVentas2())
+            
+            c = UBound(CostoDeVentas2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = CostoDeVentas2(0) & c
+
+        Case "Gastos Operativos"
+            ReDim Preserve GastosOperativos1(UBound(GastosOperativos1()) + 1)
+            ReDim Preserve GastosOperativos2(UBound(GastosOperativos2()) + 1)
+            
+            GastosOperativos1(UBound(GastosOperativos1())) = Range("B" & n).Value
+            GastosOperativos2(UBound(GastosOperativos2())) = UBound(GastosOperativos2())
+            
+            c = UBound(GastosOperativos2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = GastosOperativos2(0) & c
+
+        Case "Gastos Financieros"
+            ReDim Preserve GastosFinancieros1(UBound(GastosFinancieros1()) + 1)
+            ReDim Preserve GastosFinancieros2(UBound(GastosFinancieros2()) + 1)
+            
+            GastosFinancieros1(UBound(GastosFinancieros1())) = Range("B" & n).Value
+            GastosFinancieros2(UBound(GastosFinancieros2())) = UBound(GastosFinancieros2())
+            
+            c = UBound(GastosFinancieros2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = GastosFinancieros2(0) & c
+
+        Case "Gastos Extraordinarios"
+            ReDim Preserve GastosExtraordinarios1(UBound(GastosExtraordinarios1()) + 1)
+            ReDim Preserve GastosExtraordinarios2(UBound(GastosExtraordinarios2()) + 1)
+            
+            GastosExtraordinarios1(UBound(GastosExtraordinarios1())) = Range("B" & n).Value
+            GastosExtraordinarios2(UBound(GastosExtraordinarios2())) = UBound(GastosExtraordinarios2())
+            
+            c = UBound(GastosExtraordinarios2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = GastosExtraordinarios2(0) & c
+
+        Case "Descuentos otorgados"
+            ReDim Preserve DescuentosOtorgados1(UBound(DescuentosOtorgados1()) + 1)
+            ReDim Preserve DescuentosOtorgados2(UBound(DescuentosOtorgados2()) + 1)
+            
+            DescuentosOtorgados1(UBound(DescuentosOtorgados1())) = Range("B" & n).Value
+            DescuentosOtorgados2(UBound(DescuentosOtorgados2())) = UBound(DescuentosOtorgados2())
+            
+            c = UBound(DescuentosOtorgados2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = DescuentosOtorgados2(0) & c
+
+        Case "Ingresos Operativos"
+            ReDim Preserve IngresosOperativos1(UBound(IngresosOperativos1()) + 1)
+            ReDim Preserve IngresosOperativos2(UBound(IngresosOperativos2()) + 1)
+            
+            IngresosOperativos1(UBound(IngresosOperativos1())) = Range("B" & n).Value
+            IngresosOperativos2(UBound(IngresosOperativos2())) = UBound(IngresosOperativos2())
+            
+            c = UBound(IngresosOperativos2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = IngresosOperativos2(0) & c
+
+        Case "Ingresos Extraordinarios"
+            ReDim Preserve IngresosExtraordinarios1(UBound(IngresosExtraordinarios1()) + 1)
+            ReDim Preserve IngresosExtraordinarios2(UBound(IngresosExtraordinarios2()) + 1)
+            
+            IngresosExtraordinarios1(UBound(IngresosExtraordinarios1())) = Range("B" & n).Value
+            IngresosExtraordinarios2(UBound(IngresosExtraordinarios2())) = UBound(IngresosExtraordinarios2())
+            
+            c = UBound(IngresosExtraordinarios2())
+            c = Format(c, "0000")
+            Range("A" & n).Value = IngresosExtraordinarios2(0) & c
+
+        Case Else
+    End Select
+
+Next n
+
+For n1 = 0 To UBound(Disponibilidades1())
+  Cells(21 + n1, 6).Value = Disponibilidades1(n1)
+  Cells(21 + n1, 7).Value = Disponibilidades2(n1)
+Next n1
+
+For n2 = 0 To UBound(CreditosPorVentas1())
+  Cells(21 + n2, 9).Value = CreditosPorVentas1(n2)
+  Cells(21 + n2, 10).Value = CreditosPorVentas2(n2)
+Next n2
+
+For n3 = 0 To UBound(BienesDeCambio1())
+  Cells(21 + n3, 12).Value = BienesDeCambio1(n3)
+  Cells(21 + n3, 13).Value = BienesDeCambio2(n3)
+Next n3
+
+For n4 = 0 To UBound(OtrosCreditos1())
+  Cells(21 + n4, 15).Value = OtrosCreditos1(n4)
+  Cells(21 + n4, 16).Value = OtrosCreditos2(n4)
+Next n4
+
+For n5 = 0 To UBound(CreditosALargoPlazo1())
+  Cells(21 + n5, 18).Value = CreditosALargoPlazo1(n5)
+  Cells(21 + n5, 19).Value = CreditosALargoPlazo2(n5)
+Next n5
+
+For n6 = 0 To UBound(BienesDeUso1())
+  Cells(21 + n6, 21).Value = BienesDeUso1(n6)
+  Cells(21 + n6, 22).Value = BienesDeUso2(n6)
+Next n6
+
+For n7 = 0 To UBound(Intangibles1())
+  Cells(21 + n7, 24).Value = Intangibles1(n7)
+  Cells(21 + n7, 25).Value = Intangibles2(n7)
+Next n7
+
+For n8 = 0 To UBound(DeudasComerciales1())
+  Cells(21 + n8, 27).Value = DeudasComerciales1(n8)
+  Cells(21 + n8, 28).Value = DeudasComerciales2(n8)
+Next n8
+
+For n9 = 0 To UBound(DeudasFinancieras1())
+  Cells(21 + n9, 30).Value = DeudasFinancieras1(n9)
+  Cells(21 + n9, 31).Value = DeudasFinancieras2(n9)
+Next n9
+
+For n10 = 0 To UBound(OtrasDeudas1())
+  Cells(21 + n10, 33).Value = OtrasDeudas1(n10)
+  Cells(21 + n10, 34).Value = OtrasDeudas2(n10)
+Next n10
+
+For n11 = 0 To UBound(Provisiones1())
+  Cells(21 + n11, 36).Value = Provisiones1(n11)
+  Cells(21 + n11, 37).Value = Provisiones2(n11)
+Next n11
+
+For n12 = 0 To UBound(Previsiones1())
+  Cells(21 + n12, 39).Value = Previsiones1(n12)
+  Cells(21 + n12, 40).Value = Previsiones2(n12)
+Next n12
+
+For n13 = 0 To UBound(DeudasALargoPlazo1())
+  Cells(21 + n13, 42).Value = DeudasALargoPlazo1(n13)
+  Cells(21 + n13, 43).Value = DeudasALargoPlazo2(n13)
+Next n13
+
+For n14 = 0 To UBound(PrevisionesNoCorrientes1())
+  Cells(21 + n14, 45).Value = PrevisionesNoCorrientes1(n14)
+  Cells(21 + n14, 46).Value = PrevisionesNoCorrientes2(n14)
+Next n14
+
+For n15 = 0 To UBound(Capital1())
+  Cells(21 + n15, 48).Value = Capital1(n15)
+  Cells(21 + n15, 49).Value = Capital2(n15)
+Next n15
+
+For n16 = 0 To UBound(AjustesAlCapital1())
+  Cells(21 + n16, 51).Value = AjustesAlCapital1(n16)
+  Cells(21 + n16, 52).Value = AjustesAlCapital2(n16)
+Next n16
+
+For n17 = 0 To UBound(Reservas1())
+  Cells(21 + n17, 54).Value = Reservas1(n17)
+  Cells(21 + n17, 55).Value = Reservas2(n17)
+Next n17
+
+For n18 = 0 To UBound(Resultados1())
+  Cells(21 + n18, 57).Value = Resultados1(n18)
+  Cells(21 + n18, 58).Value = Resultados2(n18)
+Next n18
+
+For n19 = 0 To UBound(CostoDeVentas1())
+  Cells(21 + n19, 60).Value = CostoDeVentas1(n19)
+  Cells(21 + n19, 61).Value = CostoDeVentas2(n19)
+Next n19
+
+For n20 = 0 To UBound(GastosOperativos1())
+  Cells(21 + n20, 63).Value = GastosOperativos1(n20)
+  Cells(21 + n20, 64).Value = GastosOperativos2(n20)
+Next n20
+
+For n21 = 0 To UBound(GastosFinancieros1())
+  Cells(21 + n21, 66).Value = GastosFinancieros1(n21)
+  Cells(21 + n21, 67).Value = GastosFinancieros2(n21)
+Next n21
+
+For n22 = 0 To UBound(GastosExtraordinarios1())
+  Cells(21 + n22, 69).Value = GastosExtraordinarios1(n22)
+  Cells(21 + n22, 70).Value = GastosExtraordinarios2(n22)
+Next n22
+
+For n23 = 0 To UBound(DescuentosOtorgados1())
+  Cells(21 + n23, 72).Value = DescuentosOtorgados1(n23)
+  Cells(21 + n23, 73).Value = DescuentosOtorgados2(n23)
+Next n23
+
+For n24 = 0 To UBound(IngresosOperativos1())
+  Cells(21 + n24, 75).Value = IngresosOperativos1(n24)
+  Cells(21 + n24, 76).Value = IngresosOperativos2(n24)
+Next n24
+
+For n25 = 0 To UBound(IngresosExtraordinarios1())
+  Cells(21 + n25, 78).Value = IngresosExtraordinarios1(n25)
+  Cells(21 + n25, 79).Value = IngresosExtraordinarios2(n25)
+Next n25
+
+Application.EnableEvents = True
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
