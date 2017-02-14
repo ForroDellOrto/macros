@@ -1,0 +1,244 @@
+Private Sub Worksheet_Change(ByVal Target As Range)
+
+If Target.Cells.Count > 1 Then Exit Sub
+
+If Not Intersect(Target, Columns("C:C")) Is Nothing Then
+    
+    Call GenerarCuentas
+    
+'    ' j = Nombre de Cuenta
+'    ' k = Subrubro de Cuenta
+'    ' l = Columna de Subrubro
+'    ' o = Ultima fila anterior en tabla de Subrubro
+'    ' w = Cantidad de Rubros
+'    ' h = Cantidad de Subrubros
+'
+'    If Target.Value <> "" Then
+'
+'        If Cells(Target.Row, 1).Value <> "" Then
+'
+'            ' g = Posicion del string de texto
+'            ' p =
+'            ' q =
+'
+'            If Left(Cells(Target.Row, 1).Value, 2) = "RN" Or Left(Cells(Target.Row, 1).Value, 2) = "RP" Or Left(Cells(Target.Row, 1).Value, 2) = "PN" Then
+'                g = 6
+'            Else: g = 5
+'            End If
+'
+'            i = Left(Cells(Target.Row, 1).Value, g)
+'            p = Application.WorksheetFunction.Match(i, Range("A21:CA21"), 0)
+'            q = Val(Mid(Cells(Target.Row, 1).Value, g + 1, 5))
+'
+'            Cells(21 + q, p - 1).ClearContents
+'            Cells(21 + q, p).ClearContents
+'            Cells(Target.Row, 1).ClearContents
+'
+'        End If
+'
+'        k = Target.Value
+'        j = Cells(Target.Row, 2).Value
+'
+'        w = Application.WorksheetFunction.CountA(Range("F10:F11"), Range("I10:I11"), Range("L10:L11"), Range("O10:O11"), Range("R10:R11"))
+'        h = Application.WorksheetFunction.Sum(Range("CO1:CO" & w))
+'
+'        l = Application.WorksheetFunction.Match(k, Range("CI1:CI" & h), 0)
+'
+'        o = Application.WorksheetFunction.Max(Range(Cells(22, 7 + ((l - 1) * 3)).Address & ":" & Cells(1048576, 7 + ((l - 1) * 3)).Address))
+'
+'        If Cells(o + 22, 6 + ((l - 1) * 3)).Value = "" Then Cells(o + 22, 6 + ((l - 1) * 3)).Value = j
+'        If Cells(o + 22, 7 + ((l - 1) * 3)).Value = "" Then Cells(o + 22, 7 + ((l - 1) * 3)).Value = o + 1
+'        Cells(Target.Row, 1).Value = Cells(21, 7 + ((l - 1) * 3)).Value & Application.WorksheetFunction.Text(o + 1, "00")
+'
+'
+'        'Armar Lista Alfabetica
+'
+'        Application.ScreenUpdating = False
+'
+'        ' y = Application.WorksheetFunction.Match(Cells(Target.Row, 2).Value, Range("EN1:EN" & (Target.Row - 1)), 0)
+'
+'        c = 0
+'
+'        Range("EN" & y & ":EO" & y).ClearContents
+'        Range("EM" & (Target.Row - 1)).ClearContents
+'
+'        If y <> (Target.Row - 1) Then
+'            If Target.Value = "" Then
+'
+'                Range("EN" & y + 1 & ":EO" & (Target.Row - 1)).Select
+'                Selection.Cut
+'                Range("EN" & y).Select
+'                ActiveSheet.Paste
+'                Target.Select
+'
+'            Else:
+'
+'                Range("EN" & y + 1 & ":EO" & (Target.Row - 1)).Select
+'                Selection.Cut
+'                Range("EN" & y).Select
+'                ActiveSheet.Paste
+'                Target.Select
+'
+'                Range("EN" & (Target.Row - 1)).Value = Cells(Target.Row, 2)
+'                Range("EO" & (Target.Row - 1)).Value = Target.Value
+'                Range("EM" & (Target.Row - 1)).Value = Target.Row - 1
+'                Range("EQ" & (Target.Row - 1)).Value = Cells(Target.Row, 1)
+'
+'                Range("EN1:EQ" & (Target.Row - 1)).Select
+'                Application.CutCopyMode = False
+'                ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Clear
+'                ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Add Key:=Range( _
+'                    "EN1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+'                    xlSortNormal
+'                With ActiveWorkbook.Worksheets("Plan de Cuentas").Sort
+'                    .SetRange Range("EN1:EQ" & (Target.Row - 1))
+'                    .Header = xlGuess
+'                    .MatchCase = False
+'                    .Orientation = xlTopToBottom
+'                    .SortMethod = xlPinYin
+'                    .Apply
+'                End With
+'
+'                Target.Select
+'
+'                c = 1
+'
+'            End If
+'        End If
+'
+'        If Target.Value <> "" And c <> 1 Then
+'
+'            Range("EN" & (Target.Row - 1)).Value = Cells(Target.Row, 2)
+'            Range("EO" & (Target.Row - 1)).Value = Target.Value
+'            Range("EM" & (Target.Row - 1)).Value = Target.Row - 1
+'            Range("EQ" & (Target.Row - 1)).Value = Cells(Target.Row, 1)
+'
+'            Range("EN1:EQ" & (Target.Row - 1)).Select
+'            Application.CutCopyMode = False
+'            ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Clear
+'            ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Add Key:=Range( _
+'                "EN1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+'                xlSortNormal
+'            With ActiveWorkbook.Worksheets("Plan de Cuentas").Sort
+'                .SetRange Range("EN1:EQ" & (Target.Row - 1))
+'                .Header = xlGuess
+'                .MatchCase = False
+'                .Orientation = xlTopToBottom
+'                .SortMethod = xlPinYin
+'                .Apply
+'            End With
+'
+'            Target.Select
+'
+'        End If
+'
+'        Application.ScreenUpdating = True
+'
+'        '/Armar Lista Alfabetica
+'
+'    ElseIf Cells(Target.Row, 1).Value <> "" Then
+'
+'        If Left(Cells(Target.Row, 1).Value, 2) = "RN" Or Left(Cells(Target.Row, 1).Value, 2) = "RP" Or Left(Cells(Target.Row, 1).Value, 2) = "PN" Then
+'                g = 6
+'        Else: g = 5
+'        End If
+'
+'        i = Left(Cells(Target.Row, 1).Value, g)
+'        p = Application.WorksheetFunction.Match(i, Range("A21:CA21"), 0)
+'        q = Val(Mid(Cells(Target.Row, 1).Value, g + 1, 5))
+'
+'        Cells(21 + q, p - 1).ClearContents
+'        Cells(21 + q, p).ClearContents
+'        Cells(Target.Row, 1).ClearContents
+'
+'
+'        'Armar Lista Alfabetica
+'
+'        Application.ScreenUpdating = False
+'
+'        y = Application.WorksheetFunction.Match(Cells(Target.Row, 2).Value, Range("EN1:EN" & (Target.Row - 1)), 0)
+'
+'        c = 0
+'
+'        Range("EN" & y & ":EO" & y).ClearContents
+'        Range("EM" & (Target.Row - 1)).ClearContents
+'
+'        If y <> (Target.Row - 1) Then
+'            If Target.Value = "" Then
+'
+'                Range("EN" & y + 1 & ":EO" & (Target.Row - 1)).Select
+'                Selection.Cut
+'                Range("EN" & y).Select
+'                ActiveSheet.Paste
+'                Target.Select
+'
+'            Else:
+'
+'                Range("EN" & y + 1 & ":EO" & (Target.Row - 1)).Select
+'                Selection.Cut
+'                Range("EN" & y).Select
+'                ActiveSheet.Paste
+'                Target.Select
+'
+'                Range("EN" & (Target.Row - 1)).Value = Cells(Target.Row, 2)
+'                Range("EO" & (Target.Row - 1)).Value = Target.Value
+'                Range("EM" & (Target.Row - 1)).Value = Target.Row - 1
+'                Range("EQ" & (Target.Row - 1)).Value = Cells(Target.Row, 1)
+'
+'                Range("EN1:EQ" & (Target.Row - 1)).Select
+'                Application.CutCopyMode = False
+'                ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Clear
+'                ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Add Key:=Range( _
+'                    "EN1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+'                    xlSortNormal
+'                With ActiveWorkbook.Worksheets("Plan de Cuentas").Sort
+'                    .SetRange Range("EN1:EQ" & (Target.Row - 1))
+'                    .Header = xlGuess
+'                    .MatchCase = False
+'                    .Orientation = xlTopToBottom
+'                    .SortMethod = xlPinYin
+'                    .Apply
+'                End With
+'
+'                Target.Select
+'
+'                c = 1
+'
+'            End If
+'        End If
+'
+'        If Target.Value <> "" And c <> 1 Then
+'
+'            Range("EN" & (Target.Row - 1)).Value = Cells(Target.Row, 2)
+'            Range("EO" & (Target.Row - 1)).Value = Target.Value
+'            Range("EM" & (Target.Row - 1)).Value = Target.Row - 1
+'            Range("EQ" & (Target.Row - 1)).Value = Cells(Target.Row, 1)
+'
+'            Range("EN1:EQ" & (Target.Row - 1)).Select
+'            Application.CutCopyMode = False
+'            ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Clear
+'            ActiveWorkbook.Worksheets("Plan de Cuentas").Sort.SortFields.Add Key:=Range( _
+'                "EN1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+'                xlSortNormal
+'            With ActiveWorkbook.Worksheets("Plan de Cuentas").Sort
+'                .SetRange Range("EN1:EQ" & (Target.Row - 1))
+'                .Header = xlGuess
+'                .MatchCase = False
+'                .Orientation = xlTopToBottom
+'                .SortMethod = xlPinYin
+'                .Apply
+'            End With
+'
+'            Target.Select
+'
+'        End If
+'
+'        Application.ScreenUpdating = True
+'
+'        '/Armar Lista Alfabetica
+'
+'    End If
+    
+End If
+
+End Sub
