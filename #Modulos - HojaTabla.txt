@@ -1,0 +1,541 @@
+Sub ActualizarClientes()
+
+Dim MActuales()
+
+Call DefVariables
+
+Workbooks(Diario).Sheets(Tabla).Activate
+
+Range("L2").Value = "Actualizando..."
+
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+If Not FileInUse(Path & Listados) Then Workbooks.Open (Path & Listados)
+
+j = Workbooks(Listados).Sheets(Actuales).Range("A2").End(xlDown).Row
+
+i = 1
+
+Workbooks(Listados).Sheets(Actuales).Activate
+
+For n = 2 To j
+
+    If Workbooks(Listados).Sheets(Actuales).Cells(n, 2).Value = "x" Then
+        ReDim Preserve MActuales(1 To i)
+        MActuales(i) = Workbooks(Listados).Sheets(Actuales).Cells(n, 1).Value
+        i = i + 1
+    End If
+    
+Next n
+
+j2 = Workbooks(Diario).Sheets(Tabla).Range("A2").End(xlDown).Row
+
+Workbooks(Diario).Sheets(Tabla).Activate
+
+Range("A7:H" & (j + 2)).ClearContents
+
+For n2 = 1 To (i - 1)
+    Workbooks(Diario).Sheets(Tabla).Cells(n2 + 6, 1).Value = MActuales(n2)
+Next n2
+
+Call SumasTabla
+    
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+Range("L2").ClearContents
+
+Workbooks(Listados).Close
+
+Application.ScreenUpdating = True
+Application.EnableEvents = True
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
+Sub SumasTabla()
+
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+Call DefVariables
+j = Workbooks(Diario).Sheets(Tabla).Range("A2").End(xlDown).Row
+
+For n1 = 2 To 6
+        If Workbooks(Diario).Sheets(Tabla).Cells(n1, 2).Value = vbEmpty Then
+            Workbooks(Diario).Sheets(Tabla).Cells(n1, 8).Value = 0
+        Else
+            Workbooks(Diario).Sheets(Tabla).Cells(n1, 8).Value = Workbooks(Diario).Sheets(Tabla).Cells(n1, 2).Value
+        End If
+Next n1
+
+For n2 = 7 To j
+    
+    If Workbooks(Diario).Sheets(Tabla).Cells(n2, 5).Value < 0 Then
+        If Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range("B" & n2 & ":D" & n2, "F" & n2 & ":G" & n2)) = vbEmpty Then
+            Workbooks(Diario).Sheets(Tabla).Cells(n2, 8).Value = 0
+        Else
+            Workbooks(Diario).Sheets(Tabla).Cells(n2, 8).Value = Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range("B" & n2 & ":D" & n2, "F" & n2 & ":G" & n2))
+        End If
+    Else
+        If Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range("B" & n2 & ":G" & n2)) = vbEmpty Then
+            Workbooks(Diario).Sheets(Tabla).Cells(n2, 8).Value = 0
+        Else
+            Workbooks(Diario).Sheets(Tabla).Cells(n2, 8).Value = Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range("B" & n2 & ":G" & n2))
+        End If
+    End If
+
+Next n2
+
+For n3 = 2 To 7
+    If Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range(Cells(7, n3), Cells(j, n3))) = vbEmpty Then
+        Workbooks(Diario).Sheets(Tabla).Cells(j + 2, n3).Value = 0
+    Else
+        Workbooks(Diario).Sheets(Tabla).Cells(j + 2, n3).Value = Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range(Cells(7, n3), Cells(j, n3)))
+    End If
+Next n3
+
+If Application.WorksheetFunction.Sum(Range("E7:E" & j)) < 0 Then
+    Range("K2").Value = Application.WorksheetFunction.Sum(Range("B2:B6"), Range("B7:D" & j), Range("G7:G" & j)) - Application.WorksheetFunction.Sum(Range("E7:E" & j))
+Else
+    Range("K2").Value = Application.WorksheetFunction.Sum(Range("B2:B6"), Range("B7:D" & j), Range("G7:G" & j))
+End If
+
+Application.ScreenUpdating = True
+Application.EnableEvents = True
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
+Sub Alta()
+
+Application.EnableEvents = False
+
+k = 1048576
+
+Dim Nom As Integer
+Dim Av As Integer
+Dim Ad As Integer
+Dim Dev As Integer
+Dim Mor As Integer
+Dim Desc As Integer
+Dim Red As Integer
+Dim Com As Integer
+
+Nom = 1
+Av = 2
+Ad = 3
+Dev = 4
+Mor = 5
+Desc = 6
+Red = 7
+Com = 9
+
+Sheets("Diario").Select
+i = Application.WorksheetFunction.Max(Range("A1:A" & k))
+
+l = Range("B3").End(xlDown).Offset(1, 0).Row
+
+Range("B3").End(xlDown).Offset(1, -1).Value = i + 1
+
+Sheets("Tabla").Select
+
+j = Range("A2").End(xlDown).Row
+
+p = l
+
+For M = 7 To j
+
+    If Sheets("Tabla").Cells(M, Av).Value <> "" Then
+        Sheets("Diario").Cells(p, 4).Value = "Aviso " & Sheets("Tabla").Cells(M, Nom).Value
+        Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Cells(M, Av).Value
+        Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(M, Com).Value
+        Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+        p = p + 1
+    End If
+
+Next M
+
+For n2 = 7 To j
+
+    If Sheets("Tabla").Cells(n2, Red).Value <> "" Then
+        Sheets("Diario").Cells(p, 4).Value = "Redes " & Sheets("Tabla").Cells(n2, Nom).Value
+        Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Cells(n2, Red).Value
+        Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(n2, Com).Value
+        Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+        p = p + 1
+    End If
+
+Next n2
+    
+If Sheets("Tabla").Range("B2").Value <> "" Then
+    Sheets("Diario").Cells(p, 4).Value = "Exclusividad"
+    Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Range("B2").Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(2, Com).Value
+    Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+    p = p + 1
+End If
+    
+If Sheets("Tabla").Range("B3").Value <> "" Then
+    Sheets("Diario").Cells(p, 4).Value = "Reparto de Volantes"
+    Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Range("B3").Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(3, Com).Value
+    Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+    p = p + 1
+End If
+
+If Sheets("Tabla").Range("B6").Value <> "" Then
+    Sheets("Diario").Cells(p, 4).Value = "Publinota"
+    Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Range("B6").Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(6, Com).Value
+    Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+    p = p + 1
+End If
+
+w = Range("A2").End(xlDown).Offset(2, 0).Row
+
+Sheets("Diario").Cells(p, 6).Value = "Facturación de Avisos"
+Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Cells(w, Av).Value
+Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+
+Sheets("Diario").Cells(p + 1, 6).Value = "Facturación Redes"
+Sheets("Diario").Cells(p + 1, 8).Value = Sheets("Tabla").Cells(w, Red).Value
+Sheets("Diario").Cells(p + 1, 2).Value = Sheets("Tabla").Range("K7").Value
+
+Sheets("Diario").Cells(p + 2, 6).Value = "Otros ingresos operativos"
+Sheets("Diario").Cells(p + 2, 8).Value = Sheets("Tabla").Range("H2").Value + Sheets("Tabla").Range("H3").Value + Sheets("Tabla").Range("H6").Value
+Sheets("Diario").Cells(p + 2, 2).Value = Sheets("Tabla").Range("K7").Value
+
+p = p + 3
+
+Sheets("Diario").Select
+c = Application.WorksheetFunction.Max(Range("A1:A" & k))
+Cells(p, 1).Value = c + 1
+
+Cells(p, 4).Value = "Facturación de Avisos"
+Cells(p, 7).Value = Cells(p - 3, 8).Value
+Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+
+Cells(p + 1, 4).Value = "Facturación Redes"
+Cells(p + 1, 7).Value = Cells(p - 2, 8).Value
+Sheets("Diario").Cells(p + 1, 2).Value = Sheets("Tabla").Range("K7").Value
+
+Cells(p + 2, 4).Value = "Otros ingresos operativos"
+Cells(p + 2, 7).Value = Cells(p - 1, 8).Value
+Sheets("Diario").Cells(p + 2, 2).Value = Sheets("Tabla").Range("K7").Value
+
+Cells(p + 3, 6).Value = "Ventas"
+Cells(p + 3, 8).Value = Application.WorksheetFunction.Sum(Cells(p, 7), Cells(p + 1, 7), Cells(p + 2, 7))
+Sheets("Diario").Cells(p + 3, 2).Value = Sheets("Tabla").Range("K7").Value
+
+p = p + 4
+
+If Sheets("Tabla").Cells(j + 2, Desc).Value <> 0 Then
+    
+    Sheets("Diario").Select
+    c = Application.WorksheetFunction.Max(Range("A1:A" & k))
+    Cells(p, 1).Value = c + 1
+
+    For n = 7 To j
+    
+        If Sheets("Tabla").Cells(n, Desc).Value <> "" Then
+            Sheets("Diario").Cells(p, 4).Value = "Desc. otorgados " & Sheets("Tabla").Cells(n, Nom).Value
+            Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Cells(n, Desc).Value
+            Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(n, Com).Value
+            Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+            p = p + 1
+        End If
+    
+    Next n
+    
+    For nn = 7 To j
+    
+        If Sheets("Tabla").Cells(nn, Desc).Value <> "" Then
+            Sheets("Diario").Cells(p, 6).Value = "Aviso " & Sheets("Tabla").Cells(nn, Nom).Value
+            Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Cells(nn, Desc).Value
+            Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(nn, Com).Value
+            Sheets("Diario").Cells(p, 2).Value = Sheets("Tabla").Range("K7").Value
+            p = p + 1
+        End If
+    
+    Next nn
+
+End If
+
+Application.EnableEvents = True
+
+End Sub
+Sub BorrarTabla()
+
+Dim Resp As String
+Dim w As Integer
+
+Resp = MsgBox("¿Borrar los datos de la tabla?", vbQuestion + vbYesNo, "Borrar Tabla")
+
+w = Range("A2").End(xlDown).Row
+
+If Resp = vbYes Then
+Range("B2:B6", "B7:G" & w).ClearContents
+Range("I2:I" & w).ClearContents
+End If
+
+Sheets("Tabla").Select
+
+End Sub
+Sub Cobro()
+
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+k = 1048576
+
+Path = "D:\La Vidriera\Control\Registro\2016\"
+MayorAux = "Mayor Auxiliar.xlsx"
+
+If FileInUse(Path & MayorAux) Then Workbooks(MayorAux).Close
+
+Dim Resp As String
+
+Dim Nom As Integer
+Dim Av As Integer
+Dim Ad As Integer
+Dim Dev As Integer
+Dim Mor As Integer
+Dim Desc As Integer
+Dim Red As Integer
+Dim Su As Integer
+Dim Com As Integer
+
+Nom = 1
+Av = 2
+Ad = 3
+Dev = 4
+Mor = 5
+Desc = 6
+Red = 7
+Su = 8
+Com = 9
+
+Sheets("Diario").Select
+i = Application.WorksheetFunction.Max(Range("A1:A" & k))
+
+l = Range("B3").End(xlDown).Offset(1, 0).Row
+
+Range("B3").End(xlDown).Offset(1, -1).Value = i + 1
+
+Sheets("Tabla").Select
+
+j = Range("A2").End(xlDown).Row
+
+Application.EnableEvents = True
+
+p = l
+
+Range("K2").Formula = "=SUM(B2:B6,B7:D" & j & ",G7:G" & j & ")-SUMIF(E7:E" & j & "," & Chr(34) & "<0" & Chr(34) & ")"
+
+Sheets("Diario").Cells(p, 4).Value = "Caja"
+Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Range("K2").Value
+p = p + 1
+
+
+For ñ = 7 To j
+
+If (Sheets("Tabla").Cells(ñ, Ad).Value <> "" And Sheets("Tabla").Cells(ñ, Ad).Value < 0) Then
+    Sheets("Diario").Cells(p, 4).Value = "Adelanto " & Sheets("Tabla").Cells(ñ, Nom).Value
+    Sheets("Diario").Cells(p, 7).Formula = (0 - Sheets("Tabla").Cells(ñ, Ad).Value)
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(ñ, Com).Value
+    p = p + 1
+End If
+
+Next ñ
+
+
+For M = 7 To j
+
+If (Sheets("Tabla").Cells(M, Mor).Value <> "" And Sheets("Tabla").Cells(M, Mor).Value > 0) Then
+    Sheets("Diario").Cells(p, 4).Value = "Morosidad " & Sheets("Tabla").Cells(M, Nom).Value
+    Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Cells(M, Mor).Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(M, Com).Value
+    p = p + 1
+End If
+
+Next M
+
+
+For d = 7 To j
+
+If Sheets("Tabla").Cells(d, Desc).Value <> "" Then
+    Sheets("Diario").Cells(p, 4).Value = "Desc. otorgados " & Sheets("Tabla").Cells(d, Nom).Value
+    Sheets("Diario").Cells(p, 7).Value = Sheets("Tabla").Cells(d, Desc).Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(d, Com).Value
+    p = p + 1
+End If
+
+Next d
+
+
+For a = 7 To j
+
+If Sheets("Tabla").Cells(a, Av).Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Aviso " & Sheets("Tabla").Cells(a, Nom).Value
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Cells(a, Su).Value - Sheets("Tabla").Cells(a, Ad).Value - Sheets("Tabla").Cells(a, Red).Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(a, Com).Value
+    p = p + 1
+End If
+
+Next a
+
+
+For c = 7 To j
+
+If (Sheets("Tabla").Cells(c, Ad).Value <> "" And Sheets("Tabla").Cells(c, Ad).Value > 0) Then
+    Sheets("Diario").Cells(p, 6).Value = "Adelanto " & Sheets("Tabla").Cells(c, Nom).Value
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Cells(c, Ad).Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(c, Com).Value
+    p = p + 1
+End If
+
+Next c
+
+
+For v = 7 To j
+
+If Sheets("Tabla").Cells(v, Dev).Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Saldo Pend. de Devolución " & Sheets("Tabla").Cells(v, Nom).Value
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Cells(v, Dev).Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(v, Com).Value
+    p = p + 1
+End If
+
+Next v
+
+
+For g = 7 To j
+
+If (Sheets("Tabla").Cells(g, Mor).Value <> "" And Sheets("Tabla").Cells(g, Mor).Value < 0) Then
+    Sheets("Diario").Cells(p, 6).Value = "Morosidad " & Sheets("Tabla").Cells(g, Nom).Value
+    Sheets("Diario").Cells(p, 8).Formula = (0 - Sheets("Tabla").Cells(g, Mor).Value)
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(g, Com).Value
+    p = p + 1
+End If
+
+Next g
+
+For a2 = 7 To j
+
+If Sheets("Tabla").Cells(a2, Red).Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Redes " & Sheets("Tabla").Cells(a2, Nom).Value
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Cells(a2, Red).Value
+    Sheets("Diario").Cells(p, 10).Value = Sheets("Tabla").Cells(a2, Com).Value
+    p = p + 1
+End If
+
+Next a2
+
+
+If Sheets("Tabla").Range("B2").Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Exclusividad"
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Range("B2").Value
+    p = p + 1
+End If
+
+If Sheets("Tabla").Range("B3").Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Reparto de Volantes"
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Range("B3").Value
+    p = p + 1
+End If
+
+If Sheets("Tabla").Range("B4").Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Pagos Varios Juan"
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Range("B4").Value
+    p = p + 1
+End If
+
+If Sheets("Tabla").Range("B5").Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Pagos Varios Franco"
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Range("B5").Value
+    p = p + 1
+End If
+
+If Sheets("Tabla").Range("B6").Value <> "" Then
+    Sheets("Diario").Cells(p, 6).Value = "Publinota"
+    Sheets("Diario").Cells(p, 8).Value = Sheets("Tabla").Range("B6").Value
+    p = p + 1
+End If
+
+Sheets("Diario").Select
+
+If Sheets("Tabla").Range("K7").Value <> "" Then
+Cells(l, 2).Value = Sheets("Tabla").Range("K7").Value
+End If
+
+Resp = MsgBox("¿Abrir Libro Mayor?", vbQuestion + vbYesNo, "Abrir Mayor")
+
+If Resp = vbYes Then
+    Workbooks.Open (Path & MayorAux)
+End If
+
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
+Sub Morosidades()
+
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+Path = "D:\La Vidriera\Control\Registro\2016\"
+MayorAux = "Mayor Auxiliar.xlsx"
+Diario = "Diario.xlsm"
+HD = "Diario"
+HT = "Tabla"
+
+If FileInUse(Path & MayorAux) Then Workbooks(MayorAux).Close
+
+
+Sheets(HD).Select
+i = Application.WorksheetFunction.Max(Range("A1:A1048576"))
+l = Range("B3").End(xlDown).Row + 1
+
+Cells(l, 1).Value = i + 1
+Cells(l, 2).Value = Sheets(HT).Range("K7").Value
+
+Sheets(HT).Select
+ñ = Range("A2").End(xlDown).Row
+p = 0
+
+Application.EnableEvents = True
+
+If Cells(7, 5).Value = 0 Then
+    h1 = Sheets(HT).Cells(7, 5).End(xlDown).Row
+Else
+    h1 = 7
+End If
+
+Do While h1 <= ñ
+
+    Sheets(HD).Cells(l + p, 4).Value = "Morosidad " & Sheets(HT).Cells(h1, 1).Value
+    Sheets(HD).Cells(l + p, 7).Value = Sheets(HT).Cells(h1, 5).Value
+    
+    If Cells(h1 + 1, 5).Value <> 0 Then
+        h1 = h1 + 1
+    Else
+        h1 = Cells(h1, 5).End(xlDown).Row
+    End If
+    
+    p = p + 1
+    
+Loop
+
+
+For h2 = 0 To (p - 1)
+    Sheets(HD).Cells(l + p + h2, 6).Value = "Aviso " & Right(Sheets(HD).Cells(l + h2, 4).Value, Len(Sheets(HD).Cells(l + h2, 4).Value) - Len("Morosidad "))
+    Sheets(HD).Cells(l + p + h2, 8).Value = Sheets(HD).Cells(l + h2, 7).Value
+Next h2
+
+Workbooks.Open (Path & MayorAux)
+
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
