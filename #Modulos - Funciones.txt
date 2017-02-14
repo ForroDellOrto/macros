@@ -1,0 +1,51 @@
+Public Path As String
+Public Diario As String
+Public Listados As String
+Public Mayor As String
+Public HMayor As String
+Public HDiario As String
+Public HPlan As String
+Public HList As String
+Public Tabla As String
+Public Actuales As String
+Public Cuentas()
+Public Codigos()
+Public Sub DefVariables()
+
+Path = "D:\La Vidriera\Control\Registro\2017\"
+Diario = "Diario.xlsm"
+Listados = "Listados.xlsm"
+Mayor = "Mayor.xlsm"
+HMayor = "Mayor"
+HDiario = "Diario"
+HPlan = "Plan de Cuentas"
+HList = "Listado de Clientes"
+Tabla = "Tabla"
+Actuales = "Clientes Actuales"
+
+End Sub
+Function FileInUse(sFileName) As Boolean
+
+    On Error Resume Next
+    Open sFileName For Binary Access Read Lock Read As #1
+    Close #1
+    FileInUse = IIf(Err.Number > 0, True, False)
+    On Error GoTo 0
+
+End Function
+Function GetValue(Path, File, Sheet, ref)
+   
+Dim arg As String
+
+If Right(Path, 1) <> "\" Then Path = Path & "\"
+If Dir(Path & File) = "" Then
+    GetValue = "File Not Found"
+    Exit Function
+End If
+
+arg = "'" & Path & "[" & File & "]" & Sheet & "'!" & _
+Range(ref).Range("A1").Address(, , xlR1C1)
+
+GetValue = ExecuteExcel4Macro(arg)
+
+End Function
