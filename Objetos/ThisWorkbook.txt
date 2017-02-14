@@ -1,0 +1,9 @@
+Private Sub Workbook_Open()
+
+Application.ScreenUpdating = False
+
+Call GenerarCuentas
+
+Application.ScreenUpdating = True
+
+End Sub
