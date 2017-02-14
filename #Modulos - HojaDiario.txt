@@ -1,0 +1,339 @@
+Option Compare Text
+Sub ActualizarCuentas()
+
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+Application.ScreenUpdating = False
+
+Call DefVariables
+
+If Not FileInUse(Path & Listados) Then Workbooks.Open (Path & Listados)
+
+j = Workbooks(Listados).Sheets(HPlan).Range("B2").End(xlDown).Row - 1
+
+ReDim Cuentas(1 To j)
+ReDim Codigos(1 To j)
+
+Dim CtasTabla()
+Dim str As Variant
+Dim str1 As String
+
+h = 1
+
+For n = 1 To j
+    Cuentas(n) = Workbooks(Listados).Sheets(HPlan).Cells(n + 1, 2).Value
+    Codigos(n) = Workbooks(Listados).Sheets(HPlan).Cells(n + 1, 1).Value
+    
+    str1 = Workbooks(Listados).Sheets(HPlan).Cells(n + 1, 2).Value
+    
+    For Each str In Split(str1)
+        If str = "Aviso" Or _
+                str = "Adelanto" Or _
+                str = "Saldo" Or _
+                str = "Morosidad" Or _
+                str = "Desc." Or _
+                str = "Redes" Or _
+                str = "Saldo" Or _
+                str = "Pago" Then
+            Exit For
+        Else
+            ReDim Preserve CtasTabla(1 To h)
+            CtasTabla(h) = str1
+            h = h + 1
+            Exit For
+        End If
+    Next
+    
+Next n
+
+Call QuickSort1(CtasTabla())
+Call QuickSort2(Cuentas(), Codigos(), Cuentas())
+
+For nn = 1 To j
+    Workbooks(Diario).Sheets(HDiario).Range("AA" & nn).Value = Cuentas(nn)
+    Workbooks(Diario).Sheets(HDiario).Range("AB" & nn).Value = Codigos(nn)
+Next nn
+
+Workbooks(Diario).Sheets(Tabla).Activate
+    
+    j2 = UBound(CtasTabla)
+    
+    Sheets(Tabla).Columns("AA:AA").ClearContents
+    
+    For n2 = 1 To j2
+        Sheets(Tabla).Range("AA" & n2).Value = CtasTabla(n2)
+    Next n2
+
+    Sheets(Tabla).Columns("AA:AA").EntireColumn.Hidden = True
+    
+Workbooks(Diario).Sheets(Tabla).Range("A2:A6").Select
+    
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:=("=$AA$1:$AA$" & j2)
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .ShowInput = True
+        .ShowError = True
+    End With
+
+Sheets(Tabla).Range("A1").Select
+
+Workbooks(Diario).Sheets(HDiario).Activate
+Workbooks(Diario).Sheets(HDiario).Range("D3:D1048576").Select
+    
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:=("=$AA$1:$AA$" & j)
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .ShowInput = True
+        .ShowError = True
+    End With
+    
+Workbooks(Diario).Sheets(HDiario).Range("F3:F1048576").Select
+    
+    With Selection.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:=("=$AA$1:$AA$" & j)
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .InputTitle = ""
+        .ErrorTitle = ""
+        .InputMessage = ""
+        .ErrorMessage = ""
+        .ShowInput = True
+        .ShowError = True
+    End With
+
+Workbooks(Listados).Close
+
+g = Workbooks(Diario).Sheets(HDiario).Range("B3").End(xlDown).Row
+
+For n = 3 To g
+
+    If Cells(n, 4).Value <> "" Then
+        Cells(n, 3).Value = Codigos(Application.WorksheetFunction.Match(Cells(n, 4).Value, Cuentas(), 0))
+    ElseIf Cells(n, 6).Value <> "" Then
+        Cells(n, 5).Value = Codigos(Application.WorksheetFunction.Match(Cells(n, 6).Value, Cuentas(), 0))
+    End If
+
+Next n
+
+Application.EnableEvents = True
+Application.Calculation = xlCalculationAutomatic
+Application.ScreenUpdating = True
+
+Range("A1").Select
+
+End Sub
+Sub CrearMatrizAsientos()
+
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+Range("AL2:AO1048576").ClearContents
+
+Dim Asientos1()
+Dim Asientos2()
+Dim Asientos3()
+Dim Asientos4()
+
+j = 1
+
+For n = 3 To Range("B3").End(xlDown).Row
+
+    If Cells(n, 1).Value <> "" Then
+        ReDim Preserve Asientos1(1 To j)
+        ReDim Preserve Asientos2(1 To j)
+        ReDim Preserve Asientos3(1 To j)
+        ReDim Preserve Asientos4(1 To j)
+        Asientos1(j) = j
+        Asientos2(j) = n
+        Asientos3(j) = TipoDeAsiento(n)
+        Asientos4(j) = Cells(n, 2).Value
+        j = j + 1
+    End If
+
+Next n
+
+For M = 1 To j - 1
+
+    Range("AL" & 1 + M).Value = Asientos1(M)
+    Range("AM" & 1 + M).Value = Asientos2(M)
+    Range("AN" & 1 + M).Value = Asientos3(M)
+    Range("AO" & 1 + M).Value = Asientos4(M)
+    Range("AO" & 1 + M).NumberFormat = "dd/mm/yy"
+
+Next M
+
+Application.EnableEvents = True
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
+Function TipoDeAsiento(Fila)
+
+r = Fila
+
+If Cells(r, 1).Value = "" Then
+    LimSup = Cells(r, 1).End(xlUp).Row
+Else
+    LimSup = r
+End If
+
+If r <> Cells(3, 2).End(xlDown).Row Then
+    If Cells(r, 1).End(xlDown).Row > Cells(r, 2).End(xlDown).Row Then
+        LimInf = Cells(r, 2).End(xlDown).Row
+    Else
+        LimInf = Cells(r, 1).End(xlDown).Row - 1
+    End If
+Else
+    LimInf = r
+End If
+
+Dim RD As String
+Dim RF As String
+Dim c As Range
+Dim str As Variant
+Dim str1 As String
+Dim TA As Integer
+
+RD = "D" & LimSup & ":D" & LimInf
+RF = "F" & LimSup & ":F" & LimInf
+
+
+For Each c In Range(RD)
+    str1 = c.Value
+        
+        For Each str In Split(str1)
+            If str = "Aviso" Or _
+               str = "Adelanto" Or _
+               str = "Saldo" Or _
+               str = "Morosidad" Or _
+               str = "Desc." Or _
+               str = "Ventas" Or _
+               str = "Redes" Or _
+               str = "Pago" Then
+                
+                TA = 2
+                Exit For
+            End If
+        Next
+    If TA = 2 Then Exit For
+Next
+
+If TA <> 2 Then
+    For Each c In Range(RF)
+        str1 = c.Value
+            For Each str In Split(str1)
+                If str = "Aviso" Or _
+                   str = "Adelanto" Or _
+                   str = "Saldo" Or _
+                   str = "Morosidad" Or _
+                   str = "Desc." Or _
+                   str = "Ventas" Or _
+                   str = "Redes" Or _
+                   str = "Pago" Then
+                   
+                    TA = 2
+                    Exit For
+                End If
+            Next
+
+        If TA = 2 Then Exit For
+    Next
+End If
+
+If TA <> 2 Then TA = 1
+
+
+TipoDeAsiento = TA
+
+End Function
+Private Sub QuickSort1(Arr(), Optional ByVal LB As Long, Optional ByVal UB As Long)
+
+    Dim p1 As Long, p2 As Long, ref As String, temp As String
+    
+    If LB = vbEmpty Then LB = LBound(Arr)
+    If UB = vbEmpty Then UB = UBound(Arr)
+    
+    p1 = LB
+    p2 = UB
+    
+    ref = Arr((p1 + p2) / 2)
+    
+    Do
+        Do While Arr(p1) < ref
+            p1 = p1 + 1
+        Loop
+        
+        Do While Arr(p2) > ref
+            p2 = p2 - 1
+        Loop
+
+        If p1 <= p2 Then
+            temp = Arr(p1)
+            Arr(p1) = Arr(p2)
+            Arr(p2) = temp
+            
+            p1 = p1 + 1
+            p2 = p2 - 1
+        End If
+
+    Loop Until (p1 > p2)
+    
+    If LB < p2 Then Call QuickSort1(Arr, LB, p2)
+    If p1 < UB Then Call QuickSort1(Arr, p1, UB)
+
+End Sub
+Private Sub QuickSort2(Arr1(), Arr2(), ArrBase(), Optional ByVal LB As Long, Optional ByVal UB As Long)
+
+    Dim p1 As Long, p2 As Long, ref As String, temp As String
+    
+    If LB = vbEmpty Then LB = LBound(ArrBase)
+    If UB = vbEmpty Then UB = UBound(ArrBase)
+    
+    p1 = LB
+    p2 = UB
+    
+    ref = ArrBase((p1 + p2) / 2)
+    
+    Do
+        Do While ArrBase(p1) < ref
+            p1 = p1 + 1
+        Loop
+        
+        Do While ArrBase(p2) > ref
+            p2 = p2 - 1
+        Loop
+
+        If p1 <= p2 Then
+            temp1 = Arr1(p1)
+            Arr1(p1) = Arr1(p2)
+            Arr1(p2) = temp1
+            
+            temp2 = Arr2(p1)
+            Arr2(p1) = Arr2(p2)
+            Arr2(p2) = temp2
+            
+            p1 = p1 + 1
+            p2 = p2 - 1
+        End If
+
+    Loop Until (p1 > p2)
+    
+    If LB < p2 Then Call QuickSort2(Arr1, Arr2, ArrBase, LB, p2)
+    If p1 < UB Then Call QuickSort2(Arr1, Arr2, ArrBase, p1, UB)
+
+End Sub
