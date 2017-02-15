@@ -1,0 +1,27 @@
+Sub ActualizarCodigosAsientos()
+
+Application.EnableEvents = False
+
+j = Range("B3").End(xlDown).Row
+k = Range("AA1").End(xlDown).Row
+
+RCtas = Range("AA1:AB" & k)
+
+For n = 3 To j
+
+    If Cells(n, 3).Value <> "" Then
+        Cells(n, 3).Value = Application.WorksheetFunction.VLookup(Cells(n, 4).Value, RCtas, 2, False)
+    ElseIf Cells(n, 5).Value <> "" Then
+        Cells(n, 5).Value = Application.WorksheetFunction.VLookup(Cells(n, 6).Value, RCtas, 2, False)
+    ElseIf Cells(n, 3).Value = "" And Cells(n, 4).Value <> "" Then
+        Cells(n, 3).Value = Application.WorksheetFunction.VLookup(Cells(n, 4).Value, RCtas, 2, False)
+    ElseIf Cells(n, 5).Value = "" And Cells(n, 6).Value <> "" Then
+        Cells(n, 5).Value = Application.WorksheetFunction.VLookup(Cells(n, 6).Value, RCtas, 2, False)
+    End If
+
+Next n
+
+Application.ScreenUpdating = True
+Application.EnableEvents = True
+
+End Sub

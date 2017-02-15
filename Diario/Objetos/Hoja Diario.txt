@@ -1,0 +1,40 @@
+Sub Worksheet_Change(ByVal Target As Range)
+
+Dim i As Integer
+Dim j As String
+
+If Target.Cells.Count > 1 Or IsEmpty(Target) Then Exit Sub
+
+i = Range("AA1").End(xlDown).Row
+j = Target.Value
+'k = 1048576
+
+'Range("AS1").Value = Application.WorksheetFunction.CountA(Range("B3:B" & k)) + 2
+
+'Application.Calculation = xlCalculationManual
+
+If Not Intersect(Target, Range("A2:A1048576")) Is Nothing Then
+    If Target.Offset(0, 1).Value = "" Then Target.Offset(0, 1).Formula = "<Insertar Fecha>"
+    'Range("AM" & (Target.Value + 1)).Value = Target.Row
+
+ElseIf Not Intersect(Target, Range("B2:B1048576")) Is Nothing Then
+    Application.Calculation = xlCalculationManual
+    If Target.Offset(0, -1).Value <> "" Then Call CrearMatrizAsientos
+    If Target.Offset(1, 0).Value = "<Insertar Fecha>" And Target.Offset(1, -1).Value = "" Then Target.Offset(1, 0).Value = Target.Value
+    If Target.Offset(1, 0).Value <> "" And Target.Offset(1, -1).Value = "" Then Target.Offset(1, 0).Value = Target.Value
+    Application.Calculation = xlCalculationAutomatic
+
+ElseIf Not Intersect(Target, Range("D2:D1048576")) Is Nothing Then
+    Target.Offset(0, -1).Value = Application.WorksheetFunction.VLookup(j, Range("AA1:AB" & i), 2)
+    If Target.Offset(0, -2).Value = "" And Target.Offset(0, -3).Value <> "" Then Target.Offset(0, -2).Value = "<Insertar Fecha>"
+    If Target.Offset(0, -2).Value = "" Or (Target.Offset(0, -2).Value <> Target.Offset(-1, -2).Value And Target.Offset(-1, -2).Value <> "" And Target.Offset(0, -2).Value <> "<Insertar Fecha>" And Target.Offset(0, -3) = "") Then Target.Offset(0, -2).Value = Target.Offset(-1, -2).Value
+
+ElseIf Not Intersect(Target, Range("F2:F1048576")) Is Nothing Then
+    Target.Offset(0, -1).Value = Application.WorksheetFunction.VLookup(j, Range("AA1:AB" & i), 2)
+    If Target.Offset(0, -4).Value = "" Or (Target.Offset(0, -4).Value <> Target.Offset(-1, -4).Value And Target.Offset(-1, -4).Value <> "") Then Target.Offset(0, -4).Value = Target.Offset(-1, -4).Value
+    Range("AS1").Value = Range("B2").End(xlDown).Row
+
+End If
+'Application.Calculation = xlCalculationAutomatic
+
+End Sub
