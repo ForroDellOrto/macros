@@ -129,24 +129,6 @@ Application.EnableEvents = False
 Call DefVariables
 Call MatricesClientes
 
-    Dim Nom As Integer
-    Dim Av As Integer
-    Dim Ad As Integer
-    Dim Dev As Integer
-    Dim Mor As Integer
-    Dim Desc As Integer
-    Dim Red As Integer
-    Dim Com As Integer
-    
-    Nom = 1
-    Av = 2
-    Ad = 3
-    Dev = 4
-    Mor = 5
-    Desc = 6
-    Red = 7
-    Com = 9
-
 Workbooks(Diario).Sheets(HDiario).Activate
 
     l = Workbooks(Diario).Sheets(HDiario).Range("B3").End(xlDown).Row + 1
@@ -360,24 +342,24 @@ Sheets(Tabla).Activate
 CodigoCuenta = c
 
 End Function
-Sub BorrarTabla() '##VER DESDE ACA
+Sub BorrarTabla()
 
 Dim Resp As String
 Dim w As Integer
 
 Resp = MsgBox("¿Borrar los datos de la tabla?", vbQuestion + vbYesNo, "Borrar Tabla")
 
-w = Range("A2").End(xlDown).Row
+w = Sheets("Tabla").Range("A2").End(xlDown).Row
 
 If Resp = vbYes Then
-Range("B2:B6", "B7:G" & w).ClearContents
-Range("I2:I" & w).ClearContents
+    Range("B2:B6", "B7:G" & w).ClearContents
+    Range("I2:I" & w).ClearContents
 End If
 
-Sheets("Tabla").Select
+Sheets("Tabla").Range("A1").Select
 
 End Sub
-Sub Cobro()
+Sub Cobro() '##VER DESDE ACA
 
 Application.EnableEvents = False
 Application.Calculation = xlCalculationManual
