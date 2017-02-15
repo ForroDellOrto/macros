@@ -1,0 +1,11 @@
+Private Sub Worksheet_Change(ByVal Target As Range)
+
+If Target.Cells.Count > 1 Then Exit Sub
+
+If Not Intersect(Target, Columns("C:C")) Is Nothing Then
+    
+    Call GenerarCuentas
+    
+End If
+
+End Sub

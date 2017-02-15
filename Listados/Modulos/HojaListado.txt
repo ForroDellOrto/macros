@@ -1,0 +1,195 @@
+Sub AgregarClientes()
+
+Call DefVariables
+
+Sheets(Listado).Range("F6").Value = "En Ejecución..."
+
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+If Range("D3") <> "" Then
+    If Range("D4") <> "" Then
+        j = Range("D3").End(xlDown).Row
+    Else:
+        j = 3
+    End If
+    
+    Dim ñ As Integer
+    ñ = Sheets(Actuales).Range("A2").End(xlDown).Row
+    
+    ll = 3
+    
+    For nn1 = ñ + 1 To (ñ + j - 2)
+        Sheets(Actuales).Cells(nn1, 1).Value = Sheets(Listado).Cells(ll, 4).Value
+        Sheets(Actuales).Cells(nn1, 2).Value = "x"
+        ll = ll + 1
+        If ll = j + 1 Then Exit For
+    Next nn1
+             
+    i = Sheets(Plan).Range("B2").End(xlDown).Row + 1
+    
+    For m = 3 To j
+    
+        Nombre = Sheets(Listado).Cells(m, 4).Value
+        
+        Sheets(Plan).Cells(i, 2).Value = "Aviso " & Nombre
+        Sheets(Plan).Cells(i + 1, 2) = "Adelanto " & Nombre
+        Sheets(Plan).Cells(i + 2, 2) = "Saldo Pend. de Devolución " & Nombre
+        Sheets(Plan).Cells(i + 3, 2) = "Morosidad " & Nombre
+        Sheets(Plan).Cells(i + 4, 2) = "Desc. otorgados " & Nombre
+        Sheets(Plan).Cells(i + 5, 2) = "Redes " & Nombre
+        Sheets(Plan).Cells(i + 6, 2) = "Pago diferido " & Nombre
+    
+        Sheets(Plan).Cells(i, 3).Value = "Créditos por Ventas"
+        Sheets(Plan).Cells(i + 1, 3).Value = "Deudas Comerciales"
+        Sheets(Plan).Cells(i + 2, 3).Value = "Deudas Comerciales"
+        Sheets(Plan).Cells(i + 3, 3).Value = "Créditos por Ventas"
+        Sheets(Plan).Cells(i + 4, 3).Value = "Descuentos otorgados"
+        Sheets(Plan).Cells(i + 5, 3).Value = "Créditos por Ventas"
+        Sheets(Plan).Cells(i + 6, 3).Value = "Créditos por Ventas"
+        
+        i = i + 7
+        
+        Cells(Sheets(Listado).Range("A3").End(xlDown).Row + 1, 1).Value = Nombre
+    
+    Next m
+    
+    Call GenerarCuentas
+    
+    Range("A3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    
+    ActiveWorkbook.Worksheets(Listado).Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets(Listado).Sort.SortFields.Add Key:= _
+        Range("A3"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets(Listado).Sort
+        .SetRange Range(Selection, Selection.End(xlDown))
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+End If
+
+ñ = Sheets(Actuales).Range("A2").End(xlDown).Row
+
+Dim Rang As String
+Rang = "A2:A" & ñ
+
+Sheets(Actuales).Activate
+Range(Rang).Select
+ActiveWorkbook.Worksheets("Clientes Actuales").Sort.SortFields.Clear
+ActiveWorkbook.Worksheets("Clientes Actuales").Sort.SortFields.Add Key:=Range _
+    ("A2"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+    xlSortNormal
+With ActiveWorkbook.Worksheets("Clientes Actuales").Sort
+    .SetRange Range(Rang)
+    .Header = xlNo
+    .MatchCase = False
+    .Orientation = xlTopToBottom
+    .SortMethod = xlPinYin
+    .Apply
+End With
+
+Sheets(Actuales).Range("A1").Select
+
+Sheets(Listado).Activate
+Sheets(Listado).Range("F6").ClearContents
+
+Sheets(Listado).Range("A1").Select
+
+Application.EnableEvents = True
+Application.ScreenUpdating = True
+Application.Calculation = xlCalculationAutomatic
+    
+End Sub
+Sub BorrarClientes()
+
+Application.EnableEvents = False
+Application.ScreenUpdating = False
+Application.Calculation = xlCalculationManual
+
+Call DefVariables
+
+If Sheets(Listado).Range("D3").Value <> "" Then
+    If Sheets(Listado).Range("D4").Value <> "" Then
+        j = Sheets(Listado).Range("D3").End(xlDown).Row
+    Else:
+        j = 3
+    End If
+    
+    rplan = Sheets(Plan).Range("B2").End(xlDown).Row
+    rlistado = Sheets(Listado).Range("A3").End(xlDown).Row
+    ractuales = Sheets(Actuales).Range("A2").End(xlDown).Row
+
+    For n = 3 To j
+    
+        ñ = Len(Sheets(Listado).Cells(n, 4).Value)
+    
+        For m1 = 2 To rplan
+        
+            If Right(Sheets(Plan).Cells(m1, 2).Value, ñ) = Sheets(Listado).Cells(n, 4).Value Then
+            
+                If Len(Sheets(Plan).Cells(m1, 1)) = 9 Then
+                    c = Application.WorksheetFunction.Match(Left(Sheets(Plan).Cells(m1, 1).Value, 5), Sheets(Plan).Range("A21:CA21"), 0)
+                    If IsNumeric(Right(Sheets(Plan).Cells(m1, 1).Value, 4)) Then d = CInt(Right(Sheets(Plan).Cells(m1, 1).Value, 4))
+            
+                    Sheets(Plan).Cells(21 + d, c - 1).ClearContents
+                    Sheets(Plan).Cells(21 + d, c).ClearContents
+                Else
+                    c = Application.WorksheetFunction.Match(Left(Sheets(Plan).Cells(m1, 1).Value, 6), Sheets(Plan).Range("A21:CA21"), 0)
+                    If IsNumeric(Right(Sheets(Plan).Cells(m1, 1).Value, 4)) Then d = CInt(Right(Sheets(Plan).Cells(m1, 1).Value, 4))
+            
+                    Sheets(Plan).Cells(21 + d, c - 1).ClearContents
+                    Sheets(Plan).Cells(21 + d, c).ClearContents
+                    
+                End If
+                
+                Sheets(Plan).Cells(m1, 1).ClearContents
+                Sheets(Plan).Cells(m1, 2).ClearContents
+                Sheets(Plan).Cells(m1, 3).ClearContents
+                
+            End If
+        
+        Next m1
+        
+        For m2 = 3 To rlistado
+            If Sheets(Listado).Cells(m2, 1).Value = Sheets(Listado).Cells(n, 4).Value Then
+                Sheets(Listado).Cells(m2, 1).ClearContents
+            End If
+            
+'            If m2 < rlistado Then
+'                For g2 = (m2 + 1) To rlistado                              ##GUARDA QUE SE MANDA CUALQUIERA
+'                    Sheets(Listado).Cells(g2 - 1, 1).Value = Sheets(Listado).Cells(g2, 1).Value
+'                    Sheets(Listado).Cells(rlistado, 1).ClearContents
+'                Next g2
+'            End If
+        Next m2
+        
+        For m3 = 2 To ractuales
+            If Sheets(Actuales).Cells(m3, 1).Value = Sheets(Listado).Cells(n, 4).Value Then
+                Sheets(Actuales).Cells(m3, 1).ClearContents
+                Sheets(Actuales).Cells(m3, 2).ClearContents
+            End If
+'
+'            If m3 < ractuales Then
+'                For g3 = (m3 + 1) To ractuales                             ##GUARDA QUE SE MANDA CUALQUIERA
+'                    Sheets(Actuales).Cells(g3 - 1, 1).Value = Sheets(Actuales).Cells(g3, 1).Value
+'                    Sheets(Actuales).Cells(ractuales, 1).ClearContents
+'                Next g3
+'            End If
+        Next m3
+    
+    Next n
+
+End If
+
+Application.EnableEvents = True
+Application.ScreenUpdating = True
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
