@@ -8,20 +8,39 @@ Public HPlan As String
 Public HList As String
 Public Tabla As String
 Public Actuales As String
+Public MayorAux As String
 Public Cuentas()
 Public Codigos()
+Public Nom As Integer
+Public Av As Integer
+Public Ad As Integer
+Public Dev As Integer
+Public Mor As Integer
+Public Desc As Integer
+Public Red As Integer
+Public Com As Integer
 Public Sub DefVariables()
 
 Path = "D:\La Vidriera\Control\Registro\2017\"
 Diario = "Diario.xlsm"
 Listados = "Listados.xlsm"
 Mayor = "Mayor.xlsm"
+MayorAux = "Mayor Auxiliar.xlsx"
 HMayor = "Mayor"
 HDiario = "Diario"
 HPlan = "Plan de Cuentas"
 HList = "Listado de Clientes"
 Tabla = "Tabla"
 Actuales = "Clientes Actuales"
+
+Nom = 1
+Av = 2
+Ad = 3
+Dev = 4
+Mor = 5
+Desc = 6
+Red = 7
+Com = 9
 
 End Sub
 Function FileInUse(sFileName) As Boolean
