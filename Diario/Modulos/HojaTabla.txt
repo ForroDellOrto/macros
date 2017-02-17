@@ -210,6 +210,7 @@ Next w2
 Sheets(HDiario).Activate
 Sheets(HDiario).Cells(p - 1, 8).Select
 
+    CrearMatrizAsientos
     TerminarMacro
 
 End Sub
@@ -392,7 +393,8 @@ Workbooks(Diario).Sheets(HDiario).Activate
 ''If Resp = vbYes Then
 ''    Workbooks.Open (Path & MayorAux)
 ''End If
-
+    
+    CrearMatrizAsientos
     TerminarMacro
 
 End Sub
