@@ -1,25 +1,18 @@
-Public LP()
-Public LV()
 Sub ActualizarClientes()
 
-Call DefVariables
+    DefVariables
+    MatricesClientes
+    EmpezarMacro
 
 Workbooks(Diario).Sheets(Tabla).Activate
-
-Application.ScreenUpdating = False
-Application.EnableEvents = False
-Application.Calculation = xlCalculationManual
-
-Call MatricesClientes
 
 j = Workbooks(Diario).Sheets(Tabla).Range("A2").End(xlDown).Row
 
-j2 = UBound(LV()) + UBound(LP())
-j3 = 6 + 2 + UBound(LV) + 4 + UBound(LP)
+j2 = 6 + 2 + UBound(LV) + 4 + UBound(LP)
 
 Workbooks(Diario).Sheets(Tabla).Activate
 
-Range("A7:H" & (j3 + 2)).ClearContents ''
+Range("A7:H" & (j2 + 2)).ClearContents ''
 
 With Cells(8, 1)
     .Value = "La Vidriera"
@@ -41,159 +34,12 @@ For n3 = 1 To UBound(LP)
     Workbooks(Diario).Sheets(Tabla).Cells(n3 + UBound(LV) + 12, 1).Value = LP(n3)
 Next n3
 
-Call SumasTabla
+    SumasTabla
 
-Application.ScreenUpdating = True
-Application.EnableEvents = True
-Application.Calculation = xlCalculationAutomatic
+    TerminarMacro
 
 End Sub
-Sub SumasTabla()
-
-Application.ScreenUpdating = False
-Application.EnableEvents = False
-Application.Calculation = xlCalculationManual
-
-Call DefVariables
-Call MatricesClientes
-
-Dim Filas(0 To 2)
-
-Filas(0) = 8
-Filas(1) = Filas(0) + UBound(LV)
-Filas(2) = Filas(1) + 4 + UBound(LP)
-
-
-For n1 = 2 To 6
-        If Workbooks(Diario).Sheets(Tabla).Cells(n1, 2).Value = vbEmpty Then
-            Workbooks(Diario).Sheets(Tabla).Cells(n1, 8).Value = 0
-        Else
-            Workbooks(Diario).Sheets(Tabla).Cells(n1, 8).Value = Workbooks(Diario).Sheets(Tabla).Cells(n1, 2).Value
-        End If
-Next n1
-
-For n2 = 1 To UBound(LV)
-    
-    r = Filas(0) + n2
-    
-    val0 = Application.WorksheetFunction.Sum(Sheets(Tabla).Cells(r, 2), Sheets(Tabla).Cells(r, 4), Sheets(Tabla).Cells(r, 6), Sheets(Tabla).Cells(r, 7))
-    valC = Sheets(Tabla).Cells(r, 3).Value
-    valE = Sheets(Tabla).Cells(r, 5).Value
-    
-    If valC < 0 Then
-        valorC = val0 - valC
-    Else
-        valorC = val0
-    End If
-    
-    If valE > 0 Then
-        valorE = valorC + valE
-    Else
-        valorE = valorC
-    End If
-    
-    Sheets(Tabla).Cells(r, 8).Value = valorE
-
-Next n2
-
-For n3 = 1 To UBound(LP)
-    
-    r = Filas(1) + 4 + n3
-    
-    val0 = Application.WorksheetFunction.Sum(Sheets(Tabla).Cells(r, 2), Sheets(Tabla).Cells(r, 4), Sheets(Tabla).Cells(r, 6), Sheets(Tabla).Cells(r, 7))
-    valC = Sheets(Tabla).Cells(r, 3).Value
-    valE = Sheets(Tabla).Cells(r, 5).Value
-    
-    If valC < 0 Then
-        valorC = val0 - valC
-    Else
-        valorC = val0
-    End If
-    
-    If valE > 0 Then
-        valorE = valorC + valE
-    Else
-        valorE = valorC
-    End If
-    
-    Sheets(Tabla).Cells(r, 8).Value = valorE
-
-Next n3
-
-Dim rmin()
-Dim rmax()
-
-For v = 1 To 2
-
-    ReDim Preserve rmin(1 To v)
-    If v = 1 Then
-        rmin(v) = Filas(v - 1) + 1
-    Else
-        rmin(v) = Filas(v - 1) + 5
-    End If
-    
-    ReDim Preserve rmax(1 To v)
-    rmax(v) = Filas(v)
-    
-    For b = 2 To 7
-        If Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range(Cells(rmin(v), b), Cells(rmax(v), b))) = vbEmpty Then
-            Workbooks(Diario).Sheets(Tabla).Cells(rmax(v) + 2, b).Value = 0
-        Else
-            Workbooks(Diario).Sheets(Tabla).Cells(rmax(v) + 2, b).Value = Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range(Cells(rmin(v), b), Cells(rmax(v), b)))
-        End If
-    Next b
-Next v
-
-Dim sumas(1 To 2, 1 To 3)
-
-For v2 = 1 To 2
-    sumas(v2, 1) = Application.WorksheetFunction.Sum(Range(Cells(rmin(v2), 2), Cells(rmax(v2), 2)), Range(Cells(rmin(v2), 4), Cells(rmax(v2), 4)), Range(Cells(rmin(v2), 7), Cells(rmax(v2), 7)))
-    sumas(v2, 2) = Application.WorksheetFunction.SumIf(Range(Cells(rmin(v2), 3), Cells(rmax(v2), 3)), ">0")
-    sumas(v2, 3) = -Application.WorksheetFunction.SumIf(Range(Cells(rmin(v2), 5), Cells(rmax(v2), 5)), "<0")
-Next v2
-
-Sheets(Tabla).Range("K2").Value = Application.WorksheetFunction.Sum(Range("B2:B6"), sumas())
-
-Application.ScreenUpdating = True
-Application.EnableEvents = True
-Application.Calculation = xlCalculationAutomatic
-
-End Sub
-Sub MatricesClientes()
-
-Call DefVariables
-
-nLP = 1
-nLV = 1
-
-If Not FileInUse(Path & Listados) Then Workbooks.Open (Path & Listados)
-    
-    Workbooks(Listados).Sheets(Actuales).Activate
-    
-    u = Workbooks(Listados).Sheets(Actuales).Range("A2").End(xlDown).Row
-
-    For n0 = 2 To u
-        xLV = Workbooks(Listados).Sheets(Actuales).Cells(n0, 2).Value
-        xLP = Workbooks(Listados).Sheets(Actuales).Cells(n0, 3).Value
-        
-        If xLV = "x" Then
-            ReDim Preserve LV(1 To nLV)
-            LV(nLV) = Workbooks(Listados).Sheets(Actuales).Cells(n0, 1).Value
-            nLV = nLV + 1
-        End If
-        
-        If xLP = "x" Then
-            ReDim Preserve LP(1 To nLP)
-            LP(nLP) = Workbooks(Listados).Sheets(Actuales).Cells(n0, 1).Value
-            nLP = nLP + 1
-        End If
-    
-    Next n0
-
-Workbooks(Listados).Close
-
-End Sub
-Sub Alta()
+Sub Alta() 'ACTUALIZAR!!
 
 Application.ScreenUpdating = False
 Application.Calculation = xlCalculationManual
@@ -382,51 +228,6 @@ Application.Calculation = xlCalculationAutomatic
 Application.EnableEvents = True
 
 End Sub
-Sub AltaAsiento(filafuente, colfuente, filaobj, texto, Fecha, DoH, Optional OtroAsiento)
-
-Call DefVariables
-
-valor = Sheets(Tabla).Cells(filafuente, colfuente).Value
-
-If DoH = "D" Then
-    rub = 1
-Else
-    rub = -1
-End If
-
-If valor < 0 Then
-    vall = -1
-    valor = -valor
-ElseIf valor > 0 Then
-    vall = 1
-End If
-
-sw = rub * vall
-
-Select Case sw
-    Case 1      '(D,>0),(H,<0)
-        col1 = 4
-        col2 = 7
-        col3 = 3
-    Case -1     '(D,<0),(H,>0)
-        col1 = 6
-        col2 = 8
-        col3 = 5
-End Select
-    
-If IsMissing(OtroAsiento) Then
-    cta = texto & " " & Sheets(Tabla).Cells(filafuente, 1).Value
-Else
-    cta = texto
-End If
-
-Sheets(HDiario).Cells(filaobj, col1).Value = cta
-Sheets(HDiario).Cells(filaobj, col2).Value = valor
-Sheets(HDiario).Cells(filaobj, 10).Value = Sheets(Tabla).Cells(filafuente, Com).Value
-Sheets(HDiario).Cells(filaobj, 2).Value = Fecha
-Sheets(HDiario).Cells(filaobj, col3).Value = CodigoCuenta(cta)
-
-End Sub
 Sub BorrarTabla()
 
 Dim Resp As String
@@ -434,7 +235,7 @@ Dim w As Integer
 
 Resp = MsgBox("¿Borrar los datos de la tabla?", vbQuestion + vbYesNo, "Borrar Tabla")
 
-w = Sheets("Tabla").Range("A2").End(xlDown).Row
+w = Sheets(Tabla).Range("A1048576").End(xlUp).Row
 
 If Resp = vbYes Then
     Range("B2:B6", "B7:G" & w).ClearContents
@@ -444,13 +245,11 @@ End If
 Sheets("Tabla").Range("A1").Select
 
 End Sub
-Sub Cobro() 'ACTUALIZAR!!
-
-Application.ScreenUpdating = False
-Application.EnableEvents = False
-Application.Calculation = xlCalculationManual
-
-Call DefVariables
+Sub Cobro()
+    
+    DefVariables
+    NumFilas
+    EmpezarMacro
 
 'If FileInUse(Path & MayorAux) Then Workbooks(MayorAux).Close
 
@@ -486,7 +285,6 @@ Workbooks(Diario).Sheets(HDiario).Activate
 
 Workbooks(Diario).Sheets(Tabla).Activate
 
-    j = Range("A2").End(xlDown).Row
     p = l
     Fecha = Sheets(Tabla).Range("K7").Value
 
@@ -499,10 +297,12 @@ Workbooks(Diario).Sheets(Tabla).Activate
         cta = CtasDebe(R1)
         ctatxt = CDTxt(R1)
         
-        For n1 = 7 To j
-            If Sheets(Tabla).Cells(n1, cta).Value > 0 Then
-                AltaAsiento n1, cta, p, ctatxt, Fecha, "D"
-                p = p + 1
+        For n1 = FMinLV To FMaxLP
+            If Not (n1 > FMaxLV And n1 < FMinLP) Then
+                If Sheets(Tabla).Cells(n1, cta).Value > 0 Then
+                    AltaAsiento n1, cta, p, ctatxt, Fecha, "D"
+                    p = p + 1
+                End If
             End If
         Next n1
     Next R1
@@ -511,10 +311,12 @@ Workbooks(Diario).Sheets(Tabla).Activate
         cta = CtasHaber(r2)
         ctatxt = CHTxt(r2)
         
-        For n2 = 7 To j
-            If Sheets(Tabla).Cells(n2, cta).Value < 0 Then
-                AltaAsiento n2, cta, p, ctatxt, Fecha, "H"
-                p = p + 1
+        For n2 = FMinLV To FMaxLP
+            If Not (n2 > FMaxLV And n2 < FMinLP) Then
+                If Sheets(Tabla).Cells(n2, cta).Value < 0 Then
+                    AltaAsiento n2, cta, p, ctatxt, Fecha, "H"
+                    p = p + 1
+                End If
             End If
         Next n2
     Next r2
@@ -545,10 +347,12 @@ Workbooks(Diario).Sheets(Tabla).Activate
         cta = CtasDebe(r3)
         ctatxt = CDTxt(r3)
         
-        For n3 = 7 To j
-            If Sheets(Tabla).Cells(n3, cta).Value < 0 Then
-                AltaAsiento n3, cta, p, ctatxt, Fecha, "D"
-                p = p + 1
+        For n3 = FMinLV To FMaxLP
+            If Not (n3 > FMaxLV And n3 < FMinLP) Then
+                If Sheets(Tabla).Cells(n3, cta).Value < 0 Then
+                    AltaAsiento n3, cta, p, ctatxt, Fecha, "D"
+                    p = p + 1
+                End If
             End If
         Next n3
     Next r3
@@ -557,10 +361,12 @@ Workbooks(Diario).Sheets(Tabla).Activate
         cta = CtasHaber(r4)
         ctatxt = CHTxt(r4)
         
-        For n4 = 7 To j
-            If Sheets(Tabla).Cells(n4, cta).Value > 0 Then
-                AltaAsiento n4, cta, p, ctatxt, Fecha, "H"
-                p = p + 1
+        For n4 = FMinLV To FMaxLP
+            If Not (n4 > FMaxLV And n4 < FMinLP) Then
+                If Sheets(Tabla).Cells(n4, cta).Value > 0 Then
+                    AltaAsiento n4, cta, p, ctatxt, Fecha, "H"
+                    p = p + 1
+                End If
             End If
         Next n4
     Next r4
@@ -598,8 +404,112 @@ Workbooks(Diario).Sheets(HDiario).Activate
 ''    Workbooks.Open (Path & MayorAux)
 ''End If
 
-Application.ScreenUpdating = False
-Application.EnableEvents = True
-Application.Calculation = xlCalculationAutomatic
+    TerminarMacro
+
+End Sub
+Sub SumasTabla()
+
+    DefVariables
+    MatricesClientes
+    EmpezarMacro
+
+Dim Filas(0 To 2)
+
+Filas(0) = 8
+Filas(1) = Filas(0) + UBound(LV)
+Filas(2) = Filas(1) + 4 + UBound(LP)
+
+
+For n1 = 2 To 6
+        If Workbooks(Diario).Sheets(Tabla).Cells(n1, 2).Value = vbEmpty Then
+            Workbooks(Diario).Sheets(Tabla).Cells(n1, 8).Value = 0
+        Else
+            Workbooks(Diario).Sheets(Tabla).Cells(n1, 8).Value = Workbooks(Diario).Sheets(Tabla).Cells(n1, 2).Value
+        End If
+Next n1
+
+For n2 = 1 To UBound(LV)
+    
+    r = Filas(0) + n2
+    
+    val0 = Application.WorksheetFunction.Sum(Sheets(Tabla).Cells(r, 2), Sheets(Tabla).Cells(r, 4), Sheets(Tabla).Cells(r, 6), Sheets(Tabla).Cells(r, 7))
+    valC = Sheets(Tabla).Cells(r, 3).Value
+    valE = Sheets(Tabla).Cells(r, 5).Value
+    
+    If valC < 0 Then
+        valorC = val0 - valC
+    Else
+        valorC = val0
+    End If
+    
+    If valE > 0 Then
+        valorE = valorC + valE
+    Else
+        valorE = valorC
+    End If
+    
+    Sheets(Tabla).Cells(r, 8).Value = valorE
+
+Next n2
+
+For n3 = 1 To UBound(LP)
+    
+    r = Filas(1) + 4 + n3
+    
+    val0 = Application.WorksheetFunction.Sum(Sheets(Tabla).Cells(r, 2), Sheets(Tabla).Cells(r, 4), Sheets(Tabla).Cells(r, 6), Sheets(Tabla).Cells(r, 7))
+    valC = Sheets(Tabla).Cells(r, 3).Value
+    valE = Sheets(Tabla).Cells(r, 5).Value
+    
+    If valC < 0 Then
+        valorC = val0 - valC
+    Else
+        valorC = val0
+    End If
+    
+    If valE > 0 Then
+        valorE = valorC + valE
+    Else
+        valorE = valorC
+    End If
+    
+    Sheets(Tabla).Cells(r, 8).Value = valorE
+
+Next n3
+
+Dim rmin()
+Dim rmax()
+
+For v = 1 To 2
+
+    ReDim Preserve rmin(1 To v)
+    If v = 1 Then
+        rmin(v) = Filas(v - 1) + 1
+    Else
+        rmin(v) = Filas(v - 1) + 5
+    End If
+    
+    ReDim Preserve rmax(1 To v)
+    rmax(v) = Filas(v)
+    
+    For b = 2 To 7
+        If Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range(Cells(rmin(v), b), Cells(rmax(v), b))) = vbEmpty Then
+            Workbooks(Diario).Sheets(Tabla).Cells(rmax(v) + 2, b).Value = 0
+        Else
+            Workbooks(Diario).Sheets(Tabla).Cells(rmax(v) + 2, b).Value = Application.WorksheetFunction.Sum(Workbooks(Diario).Sheets(Tabla).Range(Cells(rmin(v), b), Cells(rmax(v), b)))
+        End If
+    Next b
+Next v
+
+Dim sumas(1 To 2, 1 To 3)
+
+For v2 = 1 To 2
+    sumas(v2, 1) = Application.WorksheetFunction.Sum(Range(Cells(rmin(v2), 2), Cells(rmax(v2), 2)), Range(Cells(rmin(v2), 4), Cells(rmax(v2), 4)), Range(Cells(rmin(v2), 7), Cells(rmax(v2), 7)))
+    sumas(v2, 2) = Application.WorksheetFunction.SumIf(Range(Cells(rmin(v2), 3), Cells(rmax(v2), 3)), ">0")
+    sumas(v2, 3) = -Application.WorksheetFunction.SumIf(Range(Cells(rmin(v2), 5), Cells(rmax(v2), 5)), "<0")
+Next v2
+
+Sheets(Tabla).Range("K2").Value = Application.WorksheetFunction.Sum(Range("B2:B6"), sumas())
+
+    TerminarMacro
 
 End Sub
