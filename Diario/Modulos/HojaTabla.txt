@@ -39,14 +39,11 @@ Next n3
     TerminarMacro
 
 End Sub
-Sub Alta() 'ACTUALIZAR!!
+Sub Alta()
 
-Application.ScreenUpdating = False
-Application.Calculation = xlCalculationManual
-Application.EnableEvents = False
-
-Call DefVariables
-Call MatricesClientes
+    DefVariables
+    NumFilas
+    EmpezarMacro
 
 Workbooks(Diario).Sheets(HDiario).Activate
 
@@ -55,35 +52,31 @@ Workbooks(Diario).Sheets(HDiario).Activate
 
 Workbooks(Diario).Sheets(Tabla).Activate
 
-j = Range("A2").End(xlDown).Row
 Fecha = Sheets(Tabla).Range("K7").Value
 
 p = l
-    
-Dim UBMedios(1 To 2)
-UBMedios(1) = UBound(LV)
-UBMedios(2) = UBound(LP)
 
-Dim Filas(1 To 2)
-Filas(1) = UBMedios(1) + 6
-For n = 2 To 2
-    Filas(n) = Filas(n - 1) + UBMedios(n)
-Next n
-    
-FactLV = Application.WorksheetFunction.Sum(Sheets(Tabla).Range(Cells(7, Av), Cells(Filas(1), Av)))
-FactLP = Application.WorksheetFunction.Sum(Sheets(Tabla).Range(Cells(Filas(1) + 1, Av), Cells(Filas(2), Av)))
-FactRd = Sheets(Tabla).Cells(j + 2, Red).Value
+dmat = 2
+
+Dim NroFilas(1 To 3, 1 To 2)
+
+NroFilas(1, 1) = FMinLV
+NroFilas(2, 1) = FMaxLV
+NroFilas(3, 1) = FSumasLV
+NroFilas(1, 2) = FMinLP
+NroFilas(2, 2) = FMaxLP
+NroFilas(3, 2) = FSumasLP
+
+
+FactLV = Sheets(Tabla).Cells(FSumasLV, Av).Value
+FactLP = Sheets(Tabla).Cells(FSumasLP, Av).Value
+FactRd = Sheets(Tabla).Cells(FSumasLV, Red).Value + Sheets(Tabla).Cells(FSumasLP, Red).Value
 OtIng = Application.WorksheetFunction.Sum(Sheets(Tabla).Range("H2:H6"))
     
-For w = 1 To UBound(UBMedios)
+For w = 1 To dmat
     
-    If w = 1 Then
-        nro1 = 7
-        nro2 = Filas(1)
-    Else
-        nro1 = Filas(w - 1) + 1
-        nro2 = Filas(w)
-    End If
+    nro1 = NroFilas(1, w)
+    nro2 = NroFilas(2, w)
     
     Sheets(HDiario).Cells(p, 1).Value = nroAsiento
     nroAsiento = nroAsiento + 1
@@ -116,10 +109,12 @@ Next w
         Sheets(HDiario).Cells(p, 1).Value = nroAsiento
         nroAsiento = nroAsiento + 1
     
-        For n2 = 7 To j
-            If Sheets(Tabla).Cells(n2, Red).Value <> "" Then
-                Call AltaAsiento(n2, Red, p, "Redes", Fecha, "D")
-                p = p + 1
+        For n2 = FMinLV To FMaxLP
+            If Not (n2 > FMaxLV And n2 < FMinLP) Then
+                If Sheets(Tabla).Cells(n2, Red).Value <> "" Then
+                    Call AltaAsiento(n2, Red, p, "Redes", Fecha, "D")
+                    p = p + 1
+                End If
             End If
         Next n2
                 
@@ -187,45 +182,35 @@ Next w
 
     p = ñ + 1
 
-If Sheets(Tabla).Cells(j + 2, Desc).Value > 0 Then
     
-    For w2 = 1 To UBound(UBMedios)
-    
-        If w2 = 1 Then
-            nro1 = 7
-            nro2 = Filas(1)
-        Else
-            nro1 = Filas(w2 - 1) + 1
-            nro2 = Filas(w2)
-        End If
-        
-        Sheets(HDiario).Cells(p, 1).Value = nroAsiento
-        nroAsiento = nroAsiento + 1
-    
-        For nn1 = nro1 To nro2
-            If Sheets(Tabla).Cells(nn1, Desc).Value > 0 Then
-                Call AltaAsiento(nn1, Desc, p, "Desc. otorgados", Fecha, "D")
-                p = p + 1
-            End If
-        Next nn1
-        
-        For nn2 = nro1 To nro2
-            If Sheets(Tabla).Cells(nn2, Desc).Value > 0 Then
-                Call AltaAsiento(nn2, Desc, p, "Aviso", Fecha, "H")
-                p = p + 1
-            End If
-        Next nn2
-    
-    Next w2
+For w2 = 1 To dmat
 
-End If
+    nro1 = NroFilas(1, w2)
+    nro2 = NroFilas(2, w2)
+    
+    Sheets(HDiario).Cells(p, 1).Value = nroAsiento
+    nroAsiento = nroAsiento + 1
+
+    For nn1 = nro1 To nro2
+        If Sheets(Tabla).Cells(nn1, Desc).Value > 0 Then
+            Call AltaAsiento(nn1, Desc, p, "Desc. otorgados", Fecha, "D")
+            p = p + 1
+        End If
+    Next nn1
+    
+    For nn2 = nro1 To nro2
+        If Sheets(Tabla).Cells(nn2, Desc).Value > 0 Then
+            Call AltaAsiento(nn2, Desc, p, "Aviso", Fecha, "H")
+            p = p + 1
+        End If
+    Next nn2
+
+Next w2
 
 Sheets(HDiario).Activate
 Sheets(HDiario).Cells(p - 1, 8).Select
 
-Application.ScreenUpdating = True
-Application.Calculation = xlCalculationAutomatic
-Application.EnableEvents = True
+    TerminarMacro
 
 End Sub
 Sub BorrarTabla()
@@ -235,6 +220,8 @@ Dim w As Integer
 
 Resp = MsgBox("¿Borrar los datos de la tabla?", vbQuestion + vbYesNo, "Borrar Tabla")
 
+    EmpezarMacro
+    
 w = Sheets(Tabla).Range("A1048576").End(xlUp).Row
 
 If Resp = vbYes Then
@@ -243,6 +230,8 @@ If Resp = vbYes Then
 End If
 
 Sheets("Tabla").Range("A1").Select
+
+    TerminarMacro
 
 End Sub
 Sub Cobro()
@@ -410,7 +399,6 @@ End Sub
 Sub SumasTabla()
 
     DefVariables
-    MatricesClientes
     EmpezarMacro
 
 Dim Filas(0 To 2)
