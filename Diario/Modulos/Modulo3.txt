@@ -1,247 +1,122 @@
-Sub Alta2()
+Sub Cobro2()
 
 Application.ScreenUpdating = False
-Application.Calculation = xlCalculationManual
 Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
 
 Call DefVariables
-Call MatricesClientes
 
-    Dim Nom As Integer
-    Dim Av As Integer
-    Dim Ad As Integer
-    Dim Dev As Integer
-    Dim Mor As Integer
-    Dim Desc As Integer
-    Dim Red As Integer
-    Dim Com As Integer
-    
-    Nom = 1
-    Av = 2
-    Ad = 3
-    Dev = 4
-    Mor = 5
-    Desc = 6
-    Red = 7
-    Com = 9
+'If FileInUse(Path & MayorAux) Then Workbooks(MayorAux).Close
+
+Dim CtasDebe(1 To 2)
+Dim CtasHaber(1 To 4)
+Dim CDTxt(1 To 2)
+Dim CHTxt(1 To 4)
+
+CtasDebe(1) = Desc
+CtasDebe(2) = Mor
+
+CtasHaber(1) = Ad
+CtasHaber(2) = Tot 'Av
+CtasHaber(3) = Red
+CtasHaber(4) = Dev
+
+CDTxt(1) = "Desc. otorgados"
+CDTxt(2) = "Morosidad"
+
+CHTxt(1) = "Adelanto"
+CHTxt(2) = "Aviso"
+CHTxt(3) = "Redes"
+CHTxt(4) = "Saldo Pend. de Devolución"
+
 
 Workbooks(Diario).Sheets(HDiario).Activate
 
-    l = Workbooks(Diario).Sheets(HDiario).Range("B3").End(xlDown).Row + 1
-    nroAsiento = Application.WorksheetFunction.Max(Range("A2:A" & l)) + 1
+    i = Application.WorksheetFunction.Max(Columns("A:A"))
+    l = Range("B3").End(xlDown).Row + 1
+
+    Workbooks(Diario).Sheets(HDiario).Cells(l, 1) = i + 1
+
 
 Workbooks(Diario).Sheets(Tabla).Activate
 
-j = Range("A2").End(xlDown).Row
-Fecha = Sheets(Tabla).Range("K7").Value
+    j = Range("A2").End(xlDown).Row
+    p = l
+    Fecha = Sheets(Tabla).Range("K7").Value
 
-p = l
-    
-Dim UBMedios(1 To 2)
-UBMedios(1) = UBound(LV)
-UBMedios(2) = UBound(LP)
-
-Dim Filas(1 To 2)
-Filas(1) = UBMedios(1) + 6
-For n = 2 To 2
-    Filas(n) = Filas(n - 1) + UBMedios(n)
-Next n
-    
-FactLV = Application.WorksheetFunction.Sum(Sheets(Tabla).Range(Cells(7, Av), Cells(Filas(1), Av)))
-FactLP = Application.WorksheetFunction.Sum(Sheets(Tabla).Range(Cells(Filas(1) + 1, Av), Cells(Filas(2), Av)))
-FactRd = Sheets(Tabla).Cells(j + 2, Red).Value
-OtIng = Application.WorksheetFunction.Sum(Sheets(Tabla).Range("H2:H6"))
-    
-For w = 1 To UBound(UBMedios)
-    
-    If w = 1 Then
-        nro1 = 7
-        nro2 = Filas(1)
-    Else
-        nro1 = Filas(w - 1) + 1
-        nro2 = Filas(w)
+    If Sheets(Tabla).Range("K2").Value > 0 Then
+        AltaAsiento 2, 11, p, "Caja", Fecha, "D", 2
+        p = p + 1
     End If
-    
-    Sheets(HDiario).Cells(p, 1).Value = nroAsiento
-    nroAsiento = nroAsiento + 1
-    
-    For n1 = nro1 To nro2
-    
-        If Sheets(Tabla).Cells(n1, Av).Value <> "" Then
-            Call AltaAsiento(n1, Av, p, "Aviso", Com, Fecha, "D")
-            p = p + 1
-        End If
 
-    Next n1
+    For R1 = 1 To 2
+        cta = CtasDebe(R1)
+        ctatxt = CDTxt(R1)
+        
+        For n1 = 7 To j
+            If Sheets(Tabla).Cells(n1, cta).Value > 0 Then
+                AltaAsiento n1, cta, p, ctatxt, Fecha, "D"
+                p = p + 1
+            End If
+        Next n1
+    Next R1
     
-    Select Case w
-        Case 1
-            Sheets(HDiario).Cells(p, 6).Value = "Facturación Avisos La Vidriera"
-            Sheets(HDiario).Cells(p, 8).Value = FactLV
-        Case 2
-            Sheets(HDiario).Cells(p, 6).Value = "Facturación Avisos LujanProp"
-            Sheets(HDiario).Cells(p, 8).Value = FactLP
-    End Select
-    
-    Sheets(HDiario).Cells(p, 2).Value = Fecha
-    p = p + 1
-    
-Next w
-
-    If FactRd > 0 Then
-    
-        Sheets(HDiario).Cells(p, 1).Value = nroAsiento
-        nroAsiento = nroAsiento + 1
-    
+    For r2 = 1 To 4
+        cta = CtasHaber(r2)
+        ctatxt = CHTxt(r2)
+        
         For n2 = 7 To j
-            If Sheets(Tabla).Cells(n2, Red).Value <> "" Then
-                Call AltaAsiento(n2, Red, p, "Redes", Com, Fecha, "D")
+            If Sheets(Tabla).Cells(n2, cta).Value < 0 Then
+                AltaAsiento n2, cta, p, ctatxt, Fecha, "H"
                 p = p + 1
             End If
         Next n2
-                
-        Sheets(HDiario).Cells(p, 6).Value = "Facturación Redes"
-        Sheets(HDiario).Cells(p, 8).Value = FactRd
-        Sheets(HDiario).Cells(p, 2).Value = Fecha
-        p = p + 1
+    Next r2
     
-    End If
+    For r3 = 1 To 2
+        cta = CtasDebe(r3)
+        ctatxt = CDTxt(r3)
         
-    If OtIng > 0 Then
-    
-        Sheets(HDiario).Cells(p, 1).Value = nroAsiento
-        nroAsiento = nroAsiento + 1
-        
-        For n3 = 2 To 6
-            If Sheets(Tabla).Cells(n3, 2).Value <> "" Then
-                Sheets(HDiario).Cells(p, 4).Value = Cells(n3, 1).Value
-                Sheets(HDiario).Cells(p, 7).Value = Cells(n3, 2).Value
-                Sheets(HDiario).Cells(p, 10).Value = Cells(n3, Com).Value
-                Sheets(HDiario).Cells(p, 2).Value = Fecha
+        For n3 = 7 To j
+            If Sheets(Tabla).Cells(n3, cta).Value < 0 Then
+                AltaAsiento n3, cta, p, ctatxt, Fecha, "D"
                 p = p + 1
             End If
         Next n3
+    Next r3
+    
+    For r4 = 1 To 4
+        cta = CtasHaber(r4)
+        ctatxt = CHTxt(r4)
         
-        Sheets(HDiario).Cells(p, 6).Value = "Otros ingresos operativos"
-        Sheets(HDiario).Cells(p, 8).Value = OtIng
-        Sheets(HDiario).Cells(p, 2).Value = Fecha
-        p = p + 1
+        For n4 = 7 To j
+            If Sheets(Tabla).Cells(n4, cta).Value > 0 Then
+                AltaAsiento n4, cta, p, ctatxt, Fecha, "H"
+                p = p + 1
+            End If
+        Next n4
+    Next r4
 
-    End If
-
-    Sheets(HDiario).Cells(p, 1).Value = nroAsiento
-    nroAsiento = nroAsiento + 1
-    
-    Sheets(HDiario).Cells(p, 4).Value = "Facturación Avisos La Vidriera"
-    Sheets(HDiario).Cells(p, 7).Value = FactLV
-    Sheets(HDiario).Cells(p, 2).Value = Fecha
-    
-    Sheets(HDiario).Cells(p + 1, 4).Value = "Facturación Avisos LujanProp"
-    Sheets(HDiario).Cells(p + 1, 7).Value = FactLP
-    Sheets(HDiario).Cells(p + 1, 2).Value = Fecha
-
-    If FactRd > 0 Then
-        Sheets(HDiario).Cells(p + 2, 4).Value = "Facturación Redes"
-        Sheets(HDiario).Cells(p + 2, 7).Value = FactRd
-        Sheets(HDiario).Cells(p + 2, 2).Value = Fecha
-        g2 = p + 3
-    Else
-        g2 = p + 2
-    End If
-
-    If OtIng > 0 Then
-        Sheets(HDiario).Cells(g2, 4).Value = "Otros ingresos operativos"
-        Sheets(HDiario).Cells(g2, 7).Value = OtIng
-        Sheets(HDiario).Cells(g2, 2).Value = Fecha
-        ñ = g2 + 1
-    Else
-        ñ = g2
-    End If
-
-    Sheets(HDiario).Cells(ñ, 6).Value = "Ventas"
-    Sheets(HDiario).Cells(ñ, 8).Value = FactLV + FactLP + FactRd + OtIng
-    Sheets(HDiario).Cells(ñ, 2).Value = Fecha
-
-    p = ñ + 1
-
-If Sheets(Tabla).Cells(j + 2, Desc).Value > 0 Then
-    
-    For w2 = 1 To UBound(UBMedios)
-    
-        If w2 = 1 Then
-            nro1 = 7
-            nro2 = Filas(1)
-        Else
-            nro1 = Filas(w2 - 1) + 1
-            nro2 = Filas(w2)
+    For ddd = 2 To 6
+        If Sheets(Tabla).Cells(ddd, 2).Value > 0 Then
+            AltaAsiento ddd, 2, p, Sheets(Tabla).Cells(ddd, 1).Value, Fecha, "H", 2
+            p = p + 1
         End If
-        
-        Sheets(HDiario).Cells(p, 1).Value = nroAsiento
-        nroAsiento = nroAsiento + 1
-    
-        For nn1 = nro1 To nro2
-            If Sheets(Tabla).Cells(nn1, Desc).Value > 0 Then
-                Call AltaAsiento(nn1, Desc, p, "Desc. otorgados", Com, Fecha, "D")
-                p = p + 1
-            End If
-        Next nn1
-        
-        For nn2 = nro1 To nro2
-            If Sheets(Tabla).Cells(nn2, Desc).Value > 0 Then
-                Call AltaAsiento(nn2, Desc, p, "Aviso", Com, Fecha, "H")
-                p = p + 1
-            End If
-        Next nn2
-    
-    Next w2
+    Next ddd
 
-End If
 
-Sheets(HDiario).Activate
-Sheets(HDiario).Cells(p - 1, 8).Select
+Workbooks(Diario).Sheets(HDiario).Activate
 
-Application.ScreenUpdating = True
-Application.Calculation = xlCalculationAutomatic
+''Dim Resp As String
+''
+''Resp = MsgBox("¿Abrir Libro Mayor?", vbQuestion + vbYesNo, "Abrir Mayor")
+''
+''If Resp = vbYes Then
+''    Workbooks.Open (Path & MayorAux)
+''End If
+
+Application.ScreenUpdating = False
 Application.EnableEvents = True
-
-End Sub
-Private Sub AltaAsiento(filafuente, colfuente, filaobj, texto, Com, Fecha, DoH)
-
-If DoH = "D" Then
-    col1 = 4
-    col2 = 7
-    col3 = 3
-Else
-    col1 = 6
-    col2 = 8
-    col3 = 5
-End If
-
-cta = texto & " " & Sheets("Tabla").Cells(filafuente, 1).Value
-
-Sheets("Diario").Cells(filaobj, col1).Value = cta
-Sheets("Diario").Cells(filaobj, col2).Value = Sheets("Tabla").Cells(filafuente, colfuente).Value
-Sheets("Diario").Cells(filaobj, 10).Value = Sheets("Tabla").Cells(filafuente, Com).Value
-Sheets("Diario").Cells(filaobj, 2).Value = Fecha
-Sheets("Diario").Cells(filaobj, col3).Value = CodigoCuenta(cta)
-
-End Sub
-Private Function CodigoCuenta(cuenta)
-
-Call DefVariables
-Sheets(HDiario).Activate
-
-c = Application.WorksheetFunction.VLookup(cuenta, Sheets(HDiario).Range("AA1:AB" & Range("AA1").End(xlDown).Row), 2, False)
-
-Sheets(Tabla).Activate
-
-CodigoCuenta = c
-
-End Function
-Sub ffghg()
-
-Application.ScreenUpdating = True
 Application.Calculation = xlCalculationAutomatic
-Application.EnableEvents = True
 
 End Sub
