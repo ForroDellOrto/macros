@@ -18,6 +18,7 @@ Public Dev As Integer
 Public Mor As Integer
 Public Desc As Integer
 Public Red As Integer
+Public Tot As Integer
 Public Com As Integer
 Public Sub DefVariables()
 
@@ -40,6 +41,7 @@ Dev = 4
 Mor = 5
 Desc = 6
 Red = 7
+Tot = 8
 Com = 9
 
 End Sub
@@ -66,5 +68,20 @@ arg = "'" & Path & "[" & File & "]" & Sheet & "'!" & _
 Range(ref).Range("A1").Address(, , xlR1C1)
 
 GetValue = ExecuteExcel4Macro(arg)
+
+End Function
+Function CodigoCuenta(cuenta)
+
+    Call DefVariables
+    
+    ret = ActiveSheet.Name
+    
+    Sheets(HDiario).Activate
+    
+    c = Application.WorksheetFunction.VLookup(cuenta, Sheets(HDiario).Range("AA1:AB" & Range("AA1").End(xlDown).Row), 2, False)
+    
+    Sheets(ret).Activate
+    
+    CodigoCuenta = c
 
 End Function
