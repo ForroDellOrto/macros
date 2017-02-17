@@ -131,11 +131,11 @@ For n = 3 To g
 
 Next n
 
+Range("A1").Select
+
 Application.EnableEvents = True
 Application.Calculation = xlCalculationAutomatic
 Application.ScreenUpdating = True
-
-Range("A1").Select
 
 End Sub
 Sub CrearMatrizAsientos()
