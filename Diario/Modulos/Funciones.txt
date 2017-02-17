@@ -22,6 +22,12 @@ Public Tot As Integer
 Public Com As Integer
 Public LP()
 Public LV()
+Public FMinLV
+Public FMaxLV
+Public FMinLP
+Public FMaxLP
+Public FSumasLV
+Public FSumasLP
 Public Sub DefVariables()
 
 Path = "D:\La Vidriera\Control\Registro\2017\"
