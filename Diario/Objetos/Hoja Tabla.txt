@@ -2,7 +2,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
 
 If Target.Cells.Count > 1 Then Exit Sub
 
-j = Cells(2, 1).End(xlDown).Row
+j = Cells(1048576, 1).End(xlUp).Row
 
 If Not Intersect(Target, Range(Cells(2, 2), Cells(j, 7))) Is Nothing Then
     Call SumasTabla
