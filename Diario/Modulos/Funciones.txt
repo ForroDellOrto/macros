@@ -155,7 +155,8 @@ End Sub
 Sub MatricesClientes()
 
     DefVariables
-
+    EmpezarMacro
+    
 nLP = 1
 nLV = 1
 
@@ -186,6 +187,8 @@ If Not FileInUse(Path & Listados) Then Workbooks.Open (Path & Listados)
 Application.DisplayAlerts = False
     Workbooks(Listados).Close
 Application.DisplayAlerts = True
+
+    TerminarMacro
 
 End Sub
 Sub NumFilas()
