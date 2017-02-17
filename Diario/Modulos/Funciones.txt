@@ -20,6 +20,8 @@ Public Desc As Integer
 Public Red As Integer
 Public Tot As Integer
 Public Com As Integer
+Public LP()
+Public LV()
 Public Sub DefVariables()
 
 Path = "D:\La Vidriera\Control\Registro\2017\"
@@ -85,3 +87,98 @@ Function CodigoCuenta(cuenta)
     CodigoCuenta = c
 
 End Function
+Sub EmpezarMacro()
+
+Application.ScreenUpdating = False
+Application.Calculation = xlCalculationManual
+Application.EnableEvents = False
+
+End Sub
+Sub TerminarMacro()
+
+Application.ScreenUpdating = True
+Application.Calculation = xlCalculationAutomatic
+Application.EnableEvents = True
+
+End Sub
+Sub AltaAsiento(filafuente, colfuente, filaobj, texto, Fecha, DoH, Optional OtroAsiento)
+
+    DefVariables
+
+valor = Sheets(Tabla).Cells(filafuente, colfuente).Value
+
+If DoH = "D" Then
+    rub = 1
+Else
+    rub = -1
+End If
+
+If valor < 0 Then
+    vall = -1
+    valor = -valor
+ElseIf valor > 0 Then
+    vall = 1
+End If
+
+sw = rub * vall
+
+Select Case sw
+    Case 1      '(D,>0),(H,<0)
+        col1 = 4
+        col2 = 7
+        col3 = 3
+    Case -1     '(D,<0),(H,>0)
+        col1 = 6
+        col2 = 8
+        col3 = 5
+End Select
+    
+If IsMissing(OtroAsiento) Then
+    cta = texto & " " & Sheets(Tabla).Cells(filafuente, 1).Value
+Else
+    cta = texto
+End If
+
+Sheets(HDiario).Cells(filaobj, col1).Value = cta
+Sheets(HDiario).Cells(filaobj, col2).Value = valor
+Sheets(HDiario).Cells(filaobj, 10).Value = Sheets(Tabla).Cells(filafuente, Com).Value
+Sheets(HDiario).Cells(filaobj, 2).Value = Fecha
+Sheets(HDiario).Cells(filaobj, col3).Value = CodigoCuenta(cta)
+
+End Sub
+Sub MatricesClientes()
+
+    DefVariables
+
+nLP = 1
+nLV = 1
+
+If Not FileInUse(Path & Listados) Then Workbooks.Open (Path & Listados)
+    
+    Workbooks(Listados).Sheets(Actuales).Activate
+    
+    u = Workbooks(Listados).Sheets(Actuales).Range("A2").End(xlDown).Row
+
+    For n0 = 2 To u
+        xLV = Workbooks(Listados).Sheets(Actuales).Cells(n0, 2).Value
+        xLP = Workbooks(Listados).Sheets(Actuales).Cells(n0, 3).Value
+        
+        If xLV = "x" Then
+            ReDim Preserve LV(1 To nLV)
+            LV(nLV) = Workbooks(Listados).Sheets(Actuales).Cells(n0, 1).Value
+            nLV = nLV + 1
+        End If
+        
+        If xLP = "x" Then
+            ReDim Preserve LP(1 To nLP)
+            LP(nLP) = Workbooks(Listados).Sheets(Actuales).Cells(n0, 1).Value
+            nLP = nLP + 1
+        End If
+    
+    Next n0
+
+Application.DisplayAlerts = False
+    Workbooks(Listados).Close
+Application.DisplayAlerts = True
+
+End Sub
