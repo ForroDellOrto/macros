@@ -223,7 +223,7 @@ Resp = MsgBox("¿Borrar los datos de la tabla?", vbQuestion + vbYesNo, "Borrar T
 
     EmpezarMacro
     
-w = Sheets(Tabla).Range("A1048576").End(xlUp).Row
+w = Sheets("Tabla").Range("A1048576").End(xlUp).Row
 
 If Resp = vbYes Then
     Range("B2:B6", "B7:G" & w).ClearContents
@@ -232,6 +232,7 @@ End If
 
 Sheets("Tabla").Range("A1").Select
 
+    SumasTabla
     TerminarMacro
 
 End Sub
@@ -401,6 +402,11 @@ End Sub
 Sub SumasTabla()
 
     DefVariables
+    
+    On Error GoTo coso
+    a = UBound(LV)
+coso:     MatricesClientes
+    
     EmpezarMacro
 
 Dim Filas(0 To 2)
