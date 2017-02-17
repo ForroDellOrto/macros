@@ -1,11 +1,8 @@
 Option Compare Text
 Sub ActualizarCuentas()
 
-Application.EnableEvents = False
-Application.Calculation = xlCalculationManual
-Application.ScreenUpdating = False
-
-Call DefVariables
+    DefVariables
+    EmpezarMacro
 
 If Not FileInUse(Path & Listados) Then Workbooks.Open (Path & Listados)
 
@@ -133,15 +130,12 @@ Next n
 
 Range("A1").Select
 
-Application.EnableEvents = True
-Application.Calculation = xlCalculationAutomatic
-Application.ScreenUpdating = True
+    TerminarMacro
 
 End Sub
 Sub CrearMatrizAsientos()
 
-Application.EnableEvents = False
-Application.Calculation = xlCalculationManual
+    EmpezarMacro
 
 Range("AL2:AO1048576").ClearContents
 
@@ -178,8 +172,7 @@ For M = 1 To j - 1
 
 Next M
 
-Application.EnableEvents = True
-Application.Calculation = xlCalculationAutomatic
+    TerminarMacro
 
 End Sub
 Function TipoDeAsiento(Fila)
