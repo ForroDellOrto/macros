@@ -182,3 +182,22 @@ Application.DisplayAlerts = False
 Application.DisplayAlerts = True
 
 End Sub
+Sub NumFilas()
+
+    DefVariables
+    MatricesClientes
+    
+Dim Filas(0 To 2)
+
+Filas(0) = 8
+Filas(1) = Filas(0) + UBound(LV)
+Filas(2) = Filas(1) + 4 + UBound(LP)
+
+FMinLV = Filas(0) + 1
+FMaxLV = Filas(1)
+FMinLP = Filas(1) + 5
+FMaxLP = Filas(2)
+FSumasLV = Filas(1) + 2
+FSumasLP = Filas(2) + 2
+
+End Sub
